@@ -2,4 +2,4 @@ import { Router } from 'express';
 
 const router = Router();
 
-export default Router;
+export default router;
