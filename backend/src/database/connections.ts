@@ -7,3 +7,5 @@ mongoose.connect(
         useUnifiedTopology: true,
     }
 );
+
+export default mongoose;
