@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from '../database/connections';
 import bcrypt from 'bcryptjs';
 
 interface IUser extends mongoose.Document {
