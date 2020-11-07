@@ -3,7 +3,9 @@ import Schedule from '../models/Schedule';
 
 class ScheduleController {
     public async index (req: Request, res: Response): Promise<Response> {
-            return;
+        const listSchedule = await Schedule.find();
+
+        return res.send(listSchedule);
     }
     public async create (req: Request, res: Response): Promise<Response> {
         const { date } = req.body;
