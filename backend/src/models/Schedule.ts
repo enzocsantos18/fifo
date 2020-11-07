@@ -1,16 +1,18 @@
 import mongoose from '../database/connections';
 import { IUser } from './User';
+import { IStation } from './Station';
+
 
 interface ISchedule extends mongoose.Document {
     date: Date;
     user: IUser;
-    station: ISchedule['_id'];
+    station: IStation;
 }
 
 const ScheduleSchema = new mongoose.Schema({
     date: {
         type: Date,
-        require: true,
+        required: true,
     },
     user: {
         type: mongoose.Types.ObjectId,
