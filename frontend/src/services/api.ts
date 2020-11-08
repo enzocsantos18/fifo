@@ -2,10 +2,10 @@ import axios from 'axios';
 import Auth from './auth';
 
 export default axios.create({
-    baseURL: 'http://localhost:3333',
+    baseURL: 'http://localhost:3333/',
 });
 
-axios.interceptors.request.use(
+/*axios.interceptors.request.use(
     async config => {
         if (Auth.hasToken()) {
             config.headers['Authorization'] = Auth.getToken();
@@ -16,4 +16,4 @@ axios.interceptors.request.use(
     error => {
         Promise.reject(error);
     }
-);
+);*/

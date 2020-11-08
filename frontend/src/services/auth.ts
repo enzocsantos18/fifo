@@ -12,6 +12,10 @@ class Auth {
     public setToken(token: string): void {
         localStorage.setItem(this.key, token);
     }
+
+    public destroyToken(): void {
+        localStorage.removeItem(this.key);
+    }
 }
 
 export default new Auth();
