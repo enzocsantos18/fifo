@@ -21,4 +21,4 @@ const StationSchema = new mongoose.Schema ({
     },
 });
 
-export default mongoose.model('Station', StationSchema);
+export default mongoose.model<IStation>('Station', StationSchema);
