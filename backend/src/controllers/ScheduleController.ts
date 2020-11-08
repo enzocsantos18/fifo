@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Schedule from '../models/Schedule';
+import User from '../models/User';
 
 class ScheduleController {
     public async index(req: Request, res: Response): Promise<Response> {
@@ -17,7 +18,9 @@ class ScheduleController {
                     .status(400)
                     .send({ error: 'Schedule already exists' });
 
-            const createSchedule = await Schedule.create(req.body);
+            const user = await User.findById(res.locals['user'].id);
+
+            const createSchedule = await Schedule.create({ ...req.body, user: user._id});
 
             return res.send(createSchedule);
         } catch (err) {
