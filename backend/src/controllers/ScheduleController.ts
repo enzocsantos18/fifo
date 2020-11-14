@@ -4,9 +4,14 @@ import User from '../models/User';
 
 class ScheduleController {
     public async index(req: Request, res: Response): Promise<Response> {
-        const listSchedule = await Schedule.find();
 
-        return res.send(listSchedule);
+        const user = await User.findById(res.locals['user'].id);
+
+        const schedules = await Schedule.findOne({
+            user
+        });
+
+        return res.send(schedules);
     }
 
     public async create(req: Request, res: Response): Promise<Response> {
@@ -24,6 +29,7 @@ class ScheduleController {
 
             return res.send(createSchedule);
         } catch (err) {
+            console.log(err)
             return res.status(400).send({ error: 'Schedule failed' });
         }
     }
