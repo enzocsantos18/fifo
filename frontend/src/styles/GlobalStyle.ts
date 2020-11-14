@@ -6,6 +6,7 @@ export default createGlobalStyle`
         margin: 0;
         padding: 0;
         font-family: 'Open Sans', 'Helvetica', sans-serif;
+        background: #f2f2f2;
     }
 
     * {
@@ -23,6 +24,7 @@ export default createGlobalStyle`
         --text0: #626770;
         --text1: #494D58;
         --light1: #F8F9FB;
+        --light2: #e4e4e4;
         --red1: #FF9999;
     }
 
@@ -54,4 +56,13 @@ export default createGlobalStyle`
     svg {
         color: var(--text0);
     }
+
+    h1, h2, h3 {
+        color: var(--text0);
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
 `;
