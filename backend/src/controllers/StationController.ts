@@ -15,11 +15,7 @@ class StationController {
 
             return res.json(station);
         } catch (err) {
-            const errors = {};
-            err.inner.forEach(error => {
-                errors[error.path] = error.message;
-            });
-            return res.status(400).send(errors);
+            return res.status(400).send('No stations linked to that game');
         }
     }
 
