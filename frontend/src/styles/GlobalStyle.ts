@@ -32,6 +32,9 @@ export default createGlobalStyle`
         font-size: 18px;
         color: var(--text0);
         margin: 10px 0;
+        font-weight: 700;
+        margin-left: 5px;
+        margin-top: 20px;
     }
 
     input {
