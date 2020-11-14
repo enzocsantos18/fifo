@@ -3,6 +3,7 @@ import GameController from './controllers/GameController';
 import UserController from './controllers/UserController';
 import ScheduleController from './controllers/ScheduleController';
 import AuthController from './controllers/AuthController';
+import StationController from './controllers/StationController';
 
 import AuthMiddleware from './middlewares/auth';
 
@@ -12,9 +13,11 @@ router.post('/users', UserController.create);
 
 router.get('/games', GameController.index);
 router.post('/games', GameController.create);
+router.post('/games/stations', StationController.create);
+router.get('/games/:id/stations', StationController.indexByGame);
 
-router.get('/schedules', ScheduleController.index);
-router.post('/schedules', ScheduleController.create);
+router.get('/schedules', AuthMiddleware, ScheduleController.index);
+router.post('/schedules', AuthMiddleware, ScheduleController.create);
 router.patch('/schedules/:id', ScheduleController.update);
 router.delete('/schedules/:id', ScheduleController.delete);
 
