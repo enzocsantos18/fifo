@@ -1,5 +1,6 @@
 import React from 'react';
-import { MdArrowBack, MdArrowForward } from 'react-icons/md';
+import { MdArrowBack, MdCheck } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
 import DayPicker from '../../components/DayPicker';
 import Button from '../../components/Input/Button';
 import { RangeInput, RangeLabels } from '../../components/Input/Range/indes';
@@ -7,6 +8,8 @@ import TimePicker from '../../components/TimePicker';
 import { Container, Wrapper, Actions } from './styles';
 
 const Schedule: React.FC = () => {
+    const history = useHistory();
+
     return (
         <Wrapper>
             <Container>
@@ -26,13 +29,15 @@ const Schedule: React.FC = () => {
                     <span>60 min.</span>
                 </RangeLabels>
                 <Actions>
-                    <Button variant='secondary'>
+                    <Button
+                        variant='secondary'
+                        onClick={() => history.push('/schedule/station')}>
                         <MdArrowBack />
                         Voltar
                     </Button>
                     <Button variant='primary'>
-                        Prosseguir
-                        <MdArrowForward />
+                        Concluir
+                        <MdCheck />
                     </Button>
                 </Actions>
             </Container>
