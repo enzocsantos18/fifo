@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 import * as Yup from 'yup';
+import bcrypt from 'bcryptjs';
 
 class UserController {
     public async index(req: Request, res: Response): Promise<Response> {
@@ -47,6 +48,47 @@ class UserController {
         } catch (err) {
             return res.status(400).send({ error: 'Registration failed' });
         }
+    }
+
+    public async changePassword(req: Request, res: Response) {
+        const user = await User.findById(res.locals['user'].id).select('+password');
+
+        const schema = Yup.object().shape({
+            password: Yup.string().required('A senha deve ser digitada'),
+            newPassword: Yup.string().required('A senha deve ser digitada'),
+            confirmPassword: Yup.string().required('A senha deve ser digitada'),
+        });
+
+        try {
+            await schema.validate(req.body, {
+                abortEarly: false,
+            });
+        } catch (err) {
+            const errors = {};
+            err.inner.forEach(error => {
+                errors[error.path] = error.message;
+            });
+            return res.status(400).send(errors);
+        }
+
+        try {
+            if (!user)
+                return res.status(404).send({ error: 'Usuário não localizado.' });
+
+            if (!bcrypt.compareSync(req.body.password, user.password))
+                return res.status(400).send({ error: 'Senha incorreta.' });
+
+            if (req.body.newPassword != req.body.confirmPassword)
+                return res.status(400).send({ error: 'Nova senha e confirmação não coincidem.' });
+
+            let newPassword = await bcrypt.hash(req.body.newPassword, 10);
+            await User.findByIdAndUpdate(user.id, { password: newPassword });
+        } catch (err) {
+            console.log(err)
+            return res.status(400).send({ error: 'Falha ao atualizar a senha.' });
+        }
+
+        res.status(200).send('Senha atualizada com sucesso!');
     }
 }
 
