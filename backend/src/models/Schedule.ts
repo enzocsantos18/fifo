@@ -1,12 +1,14 @@
 import mongoose from '../database/connections';
 import { IUser } from './User';
 import { IStation } from './Station';
-
+import { IGame } from './Game';
 
 interface ISchedule extends mongoose.Document {
     date: Date;
     user: IUser;
     station: IStation;
+    game: IGame;
+    time: Number;
 }
 
 const ScheduleSchema = new mongoose.Schema({
@@ -21,6 +23,14 @@ const ScheduleSchema = new mongoose.Schema({
     station: {
         type: mongoose.Types.ObjectId,
         ref: 'Station',
+    },
+    game: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Game',
+    },
+    time: {
+        type: Number,
+        required: true
     },
 });
 

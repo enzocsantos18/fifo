@@ -11,9 +11,11 @@ class StationController {
         try {
             const game = await Game.findById(req.params.id);
 
-            const station = await GameStation.find({ game }).populate('game').populate('station');
+            const stations = await GameStation.find({ game }).populate(
+                'station'
+            );
 
-            return res.json(station);
+            return res.json(stations);
         } catch (err) {
             return res.status(400).send('No stations linked to that game');
         }
