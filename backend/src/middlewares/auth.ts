@@ -7,6 +7,13 @@ export default function AuthMiddleware(
     next: NextFunction
 ) {
     const header = req.headers['authorization'];
+
+    if (!header) {
+        res.status(401).send({
+            error: 'Invalid header',
+        });
+    }
+
     const parts = header.split(' ');
 
     if (parts.length !== 2) {
