@@ -5,28 +5,18 @@ import { Wrapper, Container, GameList, GameBanner } from './styles';
 import { useHistory } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { CircleSpinner } from 'react-spinners-kit';
+import API from '../../services/api';
+import { media } from '../../services/media';
 
 interface IGame {
     name: string;
-    imageUrl: string;
+    imageURL: string;
 }
-
-const staticGames = [
-    {
-        name: 'FIFA 20',
-        imageUrl:
-            'https://images-na.ssl-images-amazon.com/images/I/61UuGXhNqdL._SL1000_.jpg',
-    },
-    {
-        name: 'Minecraft',
-        imageUrl:
-            'https://images-na.ssl-images-amazon.com/images/I/71AKO%2BU6F6L._SL1000_.jpg',
-    },
-];
 
 const SelectGame: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearching, setSearching] = useState(false);
+    const [staticGames, setStaticGames] = useState<IGame[]>([]);
     const [games, setGames] = useState<IGame[]>([]);
     const history = useHistory();
 
@@ -34,6 +24,16 @@ const SelectGame: React.FC = () => {
         history.push('/schedule/station', {
             name,
         });
+    }
+
+    function loadGames() {
+        API.get('games')
+            .then(({ data }) => {
+                setStaticGames(data);
+            })
+            .catch(err => {
+                alert('Não foi possível carregar os jogos!');
+            });
     }
 
     function search() {
@@ -59,7 +59,7 @@ const SelectGame: React.FC = () => {
         return searchCallback.cancel;
     }, [searchQuery, searchCallback]);
 
-    console.log(isSearching);
+    useEffect(loadGames, []);
 
     return (
         <Wrapper>
@@ -81,7 +81,7 @@ const SelectGame: React.FC = () => {
                         <GameBanner
                             onClick={() => handleClick(game.name)}
                             key={game.name}>
-                            <img src={game.imageUrl} />
+                            <img src={media(game.imageURL)} />
                         </GameBanner>
                     ))}
                 </GameList>
