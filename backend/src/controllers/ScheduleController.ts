@@ -10,7 +10,10 @@ class ScheduleController {
 
         const schedules = await Schedule.find({
             user,
-        });
+        })
+            .select('-user')
+            .populate('game')
+            .populate('station');
 
         return res.json(schedules);
     }
