@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MdMoreVert } from 'react-icons/md';
+import { MdMoreVert, MdRemoveCircleOutline } from 'react-icons/md';
 
 import {
     Container,
@@ -14,6 +14,7 @@ import {
 } from './styles';
 import moment from 'moment';
 import API from '../../services/api';
+import Dropdown from '../../components/Dropdown';
 
 interface IScheduleStation {
     _id: string;
@@ -117,7 +118,15 @@ const MySchedules: React.FC = () => {
                                                     {schedule.station.name}
                                                 </span>
                                             </ScheduleInfo>
-                                            <MdMoreVert size={24} />
+                                            <Dropdown
+                                                items={[
+                                                    {
+                                                        text: 'Excluir',
+                                                        icon: <MdRemoveCircleOutline />
+                                                    },
+                                                ]}>
+                                                <MdMoreVert size={24} />
+                                            </Dropdown>
                                         </ScheduleDetails>
                                     </Schedule>
                                 ))}
