@@ -4,15 +4,15 @@ import UserController from './controllers/UserController';
 import ScheduleController from './controllers/ScheduleController';
 import AuthController from './controllers/AuthController';
 import StationController from './controllers/StationController';
-
 import AuthMiddleware from './middlewares/auth';
+import Storage from './config/storage';
 
 const router = Router();
 
 router.post('/users', UserController.create);
 
 router.get('/games', GameController.index);
-router.post('/games', GameController.create);
+router.post('/games', [Storage.single('image')], GameController.create);
 router.post('/games/stations', StationController.create);
 router.get('/games/:id/stations', StationController.indexByGame);
 
