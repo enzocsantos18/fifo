@@ -30,6 +30,7 @@ const SelectGame: React.FC = () => {
         API.get('games')
             .then(({ data }) => {
                 setStaticGames(data);
+                setGames(data);
             })
             .catch(err => {
                 alert('Não foi possível carregar os jogos!');
@@ -38,6 +39,11 @@ const SelectGame: React.FC = () => {
 
     function search() {
         setSearching(false);
+        
+        if (staticGames.length === 0) {
+            return;
+        }
+
         if (searchQuery === '') {
             setGames(staticGames);
             return;
@@ -52,14 +58,14 @@ const SelectGame: React.FC = () => {
 
     const searchCallback = useCallback(debounce(search, 500), [searchQuery]);
 
+    useEffect(loadGames, []);
+
     useEffect(() => {
         setSearching(true);
         searchCallback();
 
         return searchCallback.cancel;
     }, [searchQuery, searchCallback]);
-
-    useEffect(loadGames, []);
 
     return (
         <Wrapper>
