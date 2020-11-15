@@ -1,23 +1,82 @@
 import { Request, Response } from 'express';
 import Schedule from '../models/Schedule';
 import User from '../models/User';
+import * as Yup from 'yup';
+import moment from 'moment';
 
 class ScheduleController {
     public async index(req: Request, res: Response): Promise<Response> {
-
         const user = await User.findById(res.locals['user'].id);
 
-        const schedules = await Schedule.findOne({
-            user
+        const schedules = await Schedule.find({
+            user,
         });
 
-        return res.send(schedules);
+        return res.json(schedules);
     }
 
     public async create(req: Request, res: Response): Promise<Response> {
-        const { date } = req.body;
+        const schema = Yup.object().shape({
+            date: Yup.date().required('Date is required'),
+            station: Yup.string().required('Station is required'),
+            game: Yup.string().required('Game is required'),
+            time: Yup.number()
+                .positive('The time needs to be positive')
+                .oneOf(
+                    [15, 30, 45, 60],
+                    'The time needs to be 15, 30, 45 or 60 minutes'
+                ),
+        });
 
         try {
+            await schema.validate(req.body, {
+                abortEarly: false,
+            });
+        } catch (err) {
+            const errors = {};
+            err.inner.forEach(error => {
+                errors[error.path] = error.message;
+            });
+            return res.status(400).send(errors);
+        }
+
+        const { date, station, game, time } = req.body;
+
+        try {
+            const nextSchedule = await Schedule.findOne({
+                date: { $gte: date },
+            }).select('date');
+
+            const previousSchedule = await Schedule.findOne({
+                date: { $lte: date },
+            }).select('date time');
+
+            if (nextSchedule) {
+                const currentDate = moment(date);
+                const nextDate = moment(nextSchedule.date);
+
+                currentDate.add(time, 'minutes');
+
+                if (currentDate > nextDate) {
+                    return res
+                        .status(400)
+                        .send({ error: 'Invalid schedule time' });
+                }
+            }
+
+            if (previousSchedule) {
+                const currentDate = moment(date);
+                const previousDate = moment(previousSchedule.date);
+
+                previousDate.add(Number(previousSchedule.time), 'minutes');
+
+                if (previousDate > currentDate) {
+                    return res
+                        .status(400)
+                        .send({ error: 'Invalid schedule time' });
+                }
+            }
+
             if (await Schedule.findOne({ date }))
                 return res
                     .status(400)
@@ -25,17 +84,18 @@ class ScheduleController {
 
             const user = await User.findById(res.locals['user'].id);
 
-            const createSchedule = await Schedule.create({ ...req.body, user: user._id});
+            const schedule = await Schedule.create({
+                date,
+                station,
+                game,
+                user,
+                time,
+            });
 
-            return res.send(createSchedule);
+            return res.json(schedule);
         } catch (err) {
-            console.log(err)
             return res.status(400).send({ error: 'Schedule failed' });
         }
-    }
-
-    public async update(req: Request, res: Response): Promise<Response> {
-        return;
     }
 
     public async delete(req: Request, res: Response): Promise<Response> {
