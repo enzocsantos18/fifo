@@ -1,18 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MdArrowBack, MdCheck } from 'react-icons/md';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import DayPicker from '../../components/DayPicker';
 import Button from '../../components/Input/Button';
 import { RangeInput, RangeLabels } from '../../components/Input/Range/indes';
 import TimePicker from '../../components/TimePicker';
 import { Container, Wrapper, Actions } from './styles';
 
+interface ILocationState {
+    game?: string;
+    station?: string;
+}
+
 const Schedule: React.FC = () => {
     const history = useHistory();
+    const location = useLocation<ILocationState>();
+
+    useEffect(() => {
+        if (!location.state) {
+            history.push('/schedule/game');
+
+            return;
+        }
+    });
 
     return (
         <Wrapper>
-            <Container>
+            <Container
+                initial={{ opacity: 0, transform: 'translateX(-200px)' }}
+                animate={{ opacity: 1, transform: 'translateX(0px)' }}
+                transition={{ duration: 0.5 }}>
                 <h1>Agendar</h1>
 
                 <label>Dia</label>
@@ -31,7 +48,11 @@ const Schedule: React.FC = () => {
                 <Actions>
                     <Button
                         variant='secondary'
-                        onClick={() => history.push('/schedule/station')}>
+                        onClick={() =>
+                            history.push('/schedule/station', {
+                                ...location.state,
+                            })
+                        }>
                         <MdArrowBack />
                         Voltar
                     </Button>
