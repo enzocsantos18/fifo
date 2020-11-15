@@ -1,14 +1,14 @@
 import axios from 'axios';
 import Auth from './auth';
 
-export default axios.create({
+const api = axios.create({
     baseURL: 'http://localhost:3333/',
 });
 
-/*axios.interceptors.request.use(
+api.interceptors.request.use(
     async config => {
         if (Auth.hasToken()) {
-            config.headers['Authorization'] = Auth.getToken();
+            config.headers['Authorization'] = 'Bearer ' + Auth.getToken();
         }
 
         return config;
@@ -16,4 +16,6 @@ export default axios.create({
     error => {
         Promise.reject(error);
     }
-);*/
+);
+
+export default api;
