@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
 `;
 
 export const Container = styled(motion.div)`
-    width: 900px;
+    width: 600px;
     background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
