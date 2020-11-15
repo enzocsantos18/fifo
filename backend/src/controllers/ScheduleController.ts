@@ -1,11 +1,17 @@
 import { Request, Response } from 'express';
 import Schedule from '../models/Schedule';
+import User from '../models/User';
 
 class ScheduleController {
     public async index(req: Request, res: Response): Promise<Response> {
-        const listSchedule = await Schedule.find();
 
-        return res.send(listSchedule);
+        const user = await User.findById(res.locals['user'].id);
+
+        const schedules = await Schedule.findOne({
+            user
+        });
+
+        return res.send(schedules);
     }
 
     public async create(req: Request, res: Response): Promise<Response> {
@@ -17,10 +23,13 @@ class ScheduleController {
                     .status(400)
                     .send({ error: 'Schedule already exists' });
 
-            const createSchedule = await Schedule.create(req.body);
+            const user = await User.findById(res.locals['user'].id);
+
+            const createSchedule = await Schedule.create({ ...req.body, user: user._id});
 
             return res.send(createSchedule);
         } catch (err) {
+            console.log(err)
             return res.status(400).send({ error: 'Schedule failed' });
         }
     }
@@ -30,7 +39,9 @@ class ScheduleController {
     }
 
     public async delete(req: Request, res: Response): Promise<Response> {
-        return;
+        await Schedule.findByIdAndDelete(req.params.id);
+
+        return res.status(200).send();
     }
 }
 

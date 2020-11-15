@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
-import { GameModel as Game } from '../models/Game';
+import {
+    GameModel as Game,
+    GameStationModel as GameStation,
+} from '../models/Game';
 import * as Yup from 'yup';
+import Station from '../models/Station';
 
 class GameController {
     public async index(req: Request, res: Response): Promise<Response> {
@@ -26,9 +30,32 @@ class GameController {
             return res.status(400).send(errors);
         }
 
-        const game = await Game.create(req.body);
+        try {
+            const game = await Game.create(req.body);
 
-        return res.json(game);
+            const { stations } = req.body;
+
+            if (!stations) {
+                return res.status(400).send({ station: 'Unknown station' });
+            }
+
+            stations.forEach(async stationId => {
+                const station = await Station.findById(stationId);
+
+                if (!station)
+                    return res.status(400).send({ station: 'Unknown station' });
+
+                await GameStation.create({
+                    game,
+                    station,
+                });
+            });
+
+            return res.json(game);
+        } catch (err) {
+            console.log(err);
+            return res.status(400).send({ game: 'Invalid game' });
+        }
     }
 }
 
