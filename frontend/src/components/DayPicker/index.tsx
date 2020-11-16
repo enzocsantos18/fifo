@@ -1,31 +1,45 @@
+import { useField } from '@unform/core';
 import React, { useState, useEffect } from 'react';
-import { Container, DayPick, DayCircle } from './styles';
+import { Wrapper, Container, DayPick, DayCircle } from './styles';
+import moment from 'moment';
 
-interface IDay {
+export interface IDay {
     day: number;
     label: string;
+    backendDate: string;
     disabled: boolean;
 }
 
-const DayPicker: React.FC = () => {
+interface IProps {
+    name?: string;
+}
+
+const DayPicker: React.FC<IProps> = ({ name = 'daypicker' }) => {
     const [selected, setSelected] = useState<IDay | undefined>(undefined);
     const [currentDays, setCurrentDays] = useState<IDay[]>([]);
 
+    const { fieldName, registerField, error, clearError } = useField(name);
+
     function loadDays() {
-        const currentDate = new Date();
-        const firstDay = new Date();
-
-        firstDay.setDate(currentDate.getDate() - firstDay.getDay());
-
-        const days = [];
+        const firstDate = moment();
         const dayLabels = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+        const days = [];
+
+        firstDate.subtract(moment().day(), 'days');
+
         for (let i = 0; i < 7; i++) {
-            const day = firstDay.getDate() + i + 7;
-            days.push({
-                day,
+            const currentDate = moment();
+
+            currentDate.add(i, 'days');
+
+            const day: IDay = {
+                day: currentDate.date(),
                 label: dayLabels[i],
-                disabled: currentDate.getDate() > day,
-            });
+                backendDate: currentDate.format('YYYY-MM-DD'),
+                disabled: moment().date() > currentDate.date(),
+            };
+
+            days.push(day);
         }
 
         setCurrentDays(days);
@@ -36,24 +50,41 @@ const DayPicker: React.FC = () => {
             currentDay => currentDay.day == day
         );
 
+        if (selectedDay?.disabled) {
+            return;
+        }
+
         setSelected(selectedDay);
+        clearError();
     }
 
     useEffect(loadDays, []);
 
+    useEffect(() => {
+        registerField({
+            name: fieldName,
+            getValue: () => {
+                return selected;
+            },
+        });
+    }, [fieldName, registerField, selected]);
+
     return (
-        <Container>
-            {currentDays.map(({ day, label, disabled }) => (
-                <DayPick
-                    key={day}
-                    disabled={disabled}
-                    selected={selected?.day == day}
-                    onClick={() => handleSelect(day)}>
-                    <span>{label}</span>
-                    <DayCircle>{day}</DayCircle>
-                </DayPick>
-            ))}
-        </Container>
+        <Wrapper>
+            <Container>
+                {currentDays.map(({ day, label, disabled }) => (
+                    <DayPick
+                        key={day}
+                        disabled={disabled}
+                        selected={selected?.day == day}
+                        onClick={() => handleSelect(day)}>
+                        <span>{label}</span>
+                        <DayCircle>{day}</DayCircle>
+                    </DayPick>
+                ))}
+            </Container>
+            {error && <span className='error'>{error}</span>}
+        </Wrapper>
     );
 };
 

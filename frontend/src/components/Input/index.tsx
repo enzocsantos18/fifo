@@ -29,7 +29,7 @@ const Input: React.FC<InputProps> = ({ name, as, ...rest }) => {
     return (
         <>
             {element}
-            {error && <span>{error}</span>}
+            {error && <span className='error'>{error}</span>}
         </>
     );
 };

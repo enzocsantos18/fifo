@@ -68,4 +68,12 @@ export default createGlobalStyle`
         font-size: 32px;
     }
 
+    .error {
+        font-size: 14px;
+        color: var(--red1);
+        margin-left: 5px;
+        font-weight: 700;
+        margin-bottom: 20px;    
+    }
+
 `;

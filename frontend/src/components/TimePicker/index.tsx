@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import { useField } from '@unform/core';
+import React, { useEffect, useState } from 'react';
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import Button from '../Input/Button';
 
 import { Container, Separator, TimeInput } from './styles';
 
-const TimePicker: React.FC = () => {
+export interface ITime {
+    hours: number;
+    minutes: number;
+}
+
+interface IProps {
+    name?: string;
+}
+
+const TimePicker: React.FC<IProps> = ({ name = 'timepicker' }) => {
     let [hours, setHours] = useState(15);
     let [minutes, setMinutes] = useState(0);
+
+    const { fieldName, registerField, error } = useField(name);
 
     function handleSubtract() {
         minutes -= 15;
@@ -42,15 +54,27 @@ const TimePicker: React.FC = () => {
         setMinutes(minutes);
     }
 
+    useEffect(() => {
+        registerField({
+            name: fieldName,
+            getValue: () => {
+                return {
+                    hours: hours.toString().padStart(2, '0'),
+                    minutes: minutes.toString().padStart(2, '0'),
+                };
+            },
+        });
+    }, [fieldName, registerField, hours, minutes]);
+
     return (
         <Container>
-            <Button onClick={handleSubtract}>
+            <Button onClick={handleSubtract} type='button'>
                 <MdChevronLeft size={24} />
             </Button>
             <TimeInput>{hours.toString().padStart(2, '0')}</TimeInput>
             <Separator>:</Separator>
             <TimeInput>{minutes.toString().padStart(2, '0')}</TimeInput>
-            <Button onClick={handleAdd}>
+            <Button onClick={handleAdd} type='button'>
                 <MdChevronRight size={24} />
             </Button>
         </Container>

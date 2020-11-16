@@ -9,6 +9,7 @@ import API from '../../services/api';
 import { media } from '../../services/media';
 
 interface IGame {
+    _id: string;
     name: string;
     imageURL: string;
 }
@@ -20,9 +21,9 @@ const SelectGame: React.FC = () => {
     const [games, setGames] = useState<IGame[]>([]);
     const history = useHistory();
 
-    function handleClick(name: string) {
+    function handleClick(id: string) {
         history.push('/schedule/station', {
-            name,
+            game: id,
         });
     }
 
@@ -39,7 +40,7 @@ const SelectGame: React.FC = () => {
 
     function search() {
         setSearching(false);
-        
+
         if (staticGames.length === 0) {
             return;
         }
@@ -69,7 +70,10 @@ const SelectGame: React.FC = () => {
 
     return (
         <Wrapper>
-            <Container>
+            <Container
+                initial={{ opacity: 0, transform: 'translateX(-200px)' }}
+                animate={{ opacity: 1, transform: 'translateX(0px)' }}
+                transition={{ duration: 0.5 }}>
                 <h1>Qual jogo você quer jogar?</h1>
                 <TextInput
                     placeholder='Pesquise um jogo...'
@@ -85,7 +89,7 @@ const SelectGame: React.FC = () => {
                 <GameList>
                     {games.map(game => (
                         <GameBanner
-                            onClick={() => handleClick(game.name)}
+                            onClick={() => handleClick(game._id)}
                             key={game.name}>
                             <img src={media(game.imageURL)} />
                         </GameBanner>

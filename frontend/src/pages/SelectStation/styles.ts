@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 export const Wrapper = styled.div`
     width: 100vw;
@@ -8,22 +9,21 @@ export const Wrapper = styled.div`
     align-items: center;
 `;
 
-export const Container = styled.div`
-    width: 900px;
+export const Container = styled(motion.div)`
     background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
 `;
 
 export const StationList = styled.div`
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
+    justify-content: space-between;
 `;
 
 export const Station = styled.div`
     width: 160px;
     height: 200px;
-    margin-right: 20px;
     text-align: center;
 
     color: var(--text0);
@@ -49,6 +49,6 @@ export const Actions = styled.div`
     margin-top: 30px;
 
     & button {
-        width: 48%;
+        width: 100%;
     }
 `;

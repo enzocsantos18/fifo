@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 export const Wrapper = styled.div`
     width: 100vw;
@@ -8,8 +9,8 @@ export const Wrapper = styled.div`
     align-items: center;
 `;
 
-export const Container = styled.div`
-    width: 900px;
+export const Container = styled(motion.div)`
+    width: 600px;
     background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
