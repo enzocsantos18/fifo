@@ -10,10 +10,18 @@ export const Wrapper = styled.div`
 `;
 
 export const Container = styled(motion.div)`
-    width: 600px;
     background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
+
+    & form {
+        display: flex;
+        flex-direction: column;
+
+        & label {
+            margin-top: 20px;
+        }
+    }
 `;
 
 export const Actions = styled.div`
