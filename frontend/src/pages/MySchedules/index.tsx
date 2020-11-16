@@ -69,7 +69,7 @@ const MySchedules: React.FC = () => {
             currentDate.add(i, 'days');
 
             const day: IDay = {
-                label: dayLabels[i],
+                label: dayLabels[currentDate.day()],
                 date: currentDate.format('DD/MM/YY'),
                 schedules: [],
             };
