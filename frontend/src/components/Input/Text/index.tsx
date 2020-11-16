@@ -1,6 +1,7 @@
 import React, { useState, InputHTMLAttributes, useEffect, useRef } from 'react';
 import { Wrapper } from './styles';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
+import { MdWarning } from 'react-icons/md';
 import { useField } from '@unform/core';
 
 type Variant = 'danger' | 'success' | 'warning' | undefined;
@@ -18,7 +19,13 @@ const TextInput: React.FC<IProps> = ({
     ...rest
 }) => {
     const [isPasswordVisible, setPasswordVisible] = useState(false);
-    const { fieldName, defaultValue, registerField, error } = useField(name);
+    const {
+        fieldName,
+        defaultValue,
+        registerField,
+        error,
+        clearError,
+    } = useField(name);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
@@ -30,7 +37,7 @@ const TextInput: React.FC<IProps> = ({
     }, [fieldName, registerField]);
 
     return (
-        <Wrapper hasIcon={icon !== null} variant={variant}>
+        <Wrapper hasIcon={icon !== null} variant={error ? 'danger' : variant}>
             <input
                 ref={inputRef}
                 type={
@@ -40,25 +47,35 @@ const TextInput: React.FC<IProps> = ({
                             : 'password'
                         : type
                 }
+                onChange={clearError}
+                onFocus={clearError}
                 defaultValue={defaultValue}
                 {...rest}></input>
 
-            {type == 'password' ? (
+            {error ? (
+                <span>
+                    <MdWarning size={20} />
+                </span>
+            ) : (
                 <>
-                    {isPasswordVisible ? (
-                        <span onClick={() => setPasswordVisible(false)}>
-                            <IoMdEye size={20} />
-                        </span>
+                    {type == 'password' ? (
+                        <>
+                            {isPasswordVisible ? (
+                                <span onClick={() => setPasswordVisible(false)}>
+                                    <IoMdEye size={20} />
+                                </span>
+                            ) : (
+                                <span onClick={() => setPasswordVisible(true)}>
+                                    <IoMdEyeOff size={20} />
+                                </span>
+                            )}
+                        </>
                     ) : (
-                        <span onClick={() => setPasswordVisible(true)}>
-                            <IoMdEyeOff size={20} />
-                        </span>
+                        <>{icon && <span>{icon}</span>}</>
                     )}
                 </>
-            ) : (
-                <>{icon && <span>{icon}</span>}</>
             )}
-            {error && <span className='error'>{error}</span>}
+            {error && <small className='error'>{error}</small>}
         </Wrapper>
     );
 };
