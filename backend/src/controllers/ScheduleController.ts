@@ -102,9 +102,21 @@ class ScheduleController {
     }
 
     public async delete(req: Request, res: Response): Promise<Response> {
-        await Schedule.findByIdAndDelete(req.params.id);
 
-        return res.status(200).send();
+        const user = await User.findById(res.locals['user'].id);
+
+        try {
+                await Schedule.findOneAndDelete({
+                user,
+                _id: req.params.id
+            });
+
+            return res.status(201).send('Schedule deleted.');
+        } catch(err) {
+            return res.status(400).send({ err: 'Schedule not found.'})
+        }
+
+
     }
 }
 
