@@ -34,7 +34,7 @@ const DayPicker: React.FC<IProps> = ({ name = 'daypicker' }) => {
 
             const day: IDay = {
                 day: currentDate.date(),
-                label: dayLabels[i],
+                label: dayLabels[currentDate.day()],
                 backendDate: currentDate.format('YYYY-MM-DD'),
                 disabled: moment().date() > currentDate.date(),
             };
