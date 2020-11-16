@@ -135,6 +135,28 @@ class UserController {
             return res.status(400).send({ error: 'E-mail inválido.' });
         }
     }
+
+    public async deleteUser(req: Request, res: Response): Promise<Response> {
+        const user = await User.findById(res.locals['user'].id).select(
+            '+password'
+        );
+
+        try {
+            if (!user)
+                return res
+                    .status(404)
+                    .send({ error: 'Usuário não localizado.' });
+
+            if (!bcrypt.compareSync(req.body.password, user.password))
+                return res.status(400).send({ error: 'Senha incorreta.' });
+
+            await User.findByIdAndDelete(user._id);
+
+            return res.status(201).send('Usuário deletado.');
+        } catch (err) {
+            return res.status(400).send({ error: 'Falha ao apagar usuário.' });
+        }
+    }
 }
 
 export default new UserController();
