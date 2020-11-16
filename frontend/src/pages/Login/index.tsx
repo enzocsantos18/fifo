@@ -1,10 +1,13 @@
 import React from 'react';
 
-import { Container } from './styles';
+import { Wrapper, Container } from './styles';
 import { Form } from '@unform/web';
 import Input from '../../components/Input';
 import API from '../../services/api';
 import Auth from '../../services/auth';
+import TextInput from '../../components/Input/Text';
+import { MdArrowForward, MdDrafts } from 'react-icons/md';
+import Button from '../../components/Input/Button';
 
 interface IFormData {
     email: string;
@@ -13,6 +16,9 @@ interface IFormData {
 
 const Login: React.FC = () => {
     function handleSubmit(data: IFormData) {
+
+        console.log(data);
+        return;
         API.post('auth/login/', {
             email: data.email,
             password: data.password,
@@ -30,17 +36,37 @@ const Login: React.FC = () => {
     }
 
     return (
-        <Container>
-            {Auth.hasToken() ? (
-                <button onClick={handleLogout}>Deslogar</button>
-            ) : (
+        <Wrapper>
+            <Container>
+                <h1>Login</h1>
+                <h2>Olá, faça login no FIFO</h2>
                 <Form onSubmit={handleSubmit}>
-                    <Input name='email' as={<input type='text' />} />
-                    <Input name='password' as={<input type='password' />} />
-                    <button type='submit'>Logar</button>
+                    <TextInput
+                        name='email'
+                        type='text'
+                        placeholder='Seu email'
+                        icon={<MdDrafts size={20} />}
+                    />
+
+                    <TextInput
+                        name='password'
+                        type='password'
+                        placeholder='Sua senha'
+                        icon={<MdDrafts size={20} />}
+                    />
+
+                    <a className='right'>Esqueci minha senha</a>
+                    <Button type='submit'>
+                        Fazer Login <MdArrowForward />
+                    </Button>
+                    <div className='center'>
+                        <a href='/register'>
+                            Não tem uma conta? crie uma agora
+                        </a>
+                    </div>
                 </Form>
-            )}
-        </Container>
+            </Container>
+        </Wrapper>
     );
 };
 
