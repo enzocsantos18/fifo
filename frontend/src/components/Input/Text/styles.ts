@@ -10,7 +10,8 @@ interface IWrapperProps {
 
 export const Wrapper = styled.div<IWrapperProps>`
     position: relative;
-
+    margin-bottom: 10px;
+    
     ${p =>
         p.hasIcon &&
         css`
@@ -27,6 +28,14 @@ export const Wrapper = styled.div<IWrapperProps>`
         position: absolute;
         top: 10px;
         right: 20px;
+        z-index: 5;
+        cursor: pointer;
+    }
+
+    & span:hover {
+        & svg {
+            color: var(--text1);
+        }
     }
 
     ${p => p.variant === 'danger' && css`
