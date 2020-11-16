@@ -13,6 +13,7 @@ export const Container = styled.div`
     padding: 30px 40px;
     background: #fff;
     border-radius: 16px;
+    box-shadow: 1px 1px 4px rgba(0,0,0, .1);
 
     & h1 {
         margin-bottom: 0;
