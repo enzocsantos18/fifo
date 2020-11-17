@@ -48,7 +48,8 @@ export const Wrapper = styled.div<IWrapperProps>`
                 border-color: var(--red1);
             }
 
-            & svg {
+            & svg,
+            & input::placeholder {
                 color: var(--red1);
             }
         `}
