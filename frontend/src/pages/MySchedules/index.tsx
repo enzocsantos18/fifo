@@ -119,6 +119,7 @@ const MySchedules: React.FC = () => {
                                                 </span>
                                             </ScheduleInfo>
                                             <Dropdown
+                                                width='120px'
                                                 items={[
                                                     {
                                                         text: 'Excluir',

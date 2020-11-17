@@ -4,7 +4,7 @@ export const Container = styled.div`
     width: 1200px;
     border-radius: 8px;
     margin: auto;
-    margin-top: 100px;
+    margin-top: 200px;
 
     & h2 {
         font-size: 18px;
@@ -22,10 +22,12 @@ export const DayList = styled.div`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    margin-left: -10px;
+    margin-right: -10px;
 `;
 
 export const DaySchedules = styled.div`
-    margin-right: 20px;
+    margin: 0 10px;
     width: 380px;
     min-height: 200px;
     background: #fff;
