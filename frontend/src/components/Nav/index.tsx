@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { MdExpandMore } from 'react-icons/md';
+import { UserContext } from '../../contexts/User';
+import { media } from '../../services/media';
 import Dropdown from '../Dropdown';
+import ProfileAvatar from '../ProfileAvatar';
+import { CircleShimmer, LineShimmer } from '../Shimmer';
 
 import {
     Content,
@@ -8,16 +12,18 @@ import {
     LinkList,
     LinkItem,
     ProfileContainer,
-    ProfileAvatar,
+    ProfileContainerShimmerContainer,
 } from './styles';
 
 const Nav: React.FC = () => {
+    const userData = useContext(UserContext);
+
     return (
         <Container>
             <Content>
                 <LinkList>
-                    <LinkItem href='/account/schedules'>Meus horários</LinkItem>
-                    <LinkItem href='/schedule/game'>Agendar</LinkItem>
+                    <LinkItem to='/account/schedules'>Meus horários</LinkItem>
+                    <LinkItem to='/schedule/game'>Agendar</LinkItem>
                 </LinkList>
                 <Dropdown
                     top='70px'
@@ -36,13 +42,28 @@ const Nav: React.FC = () => {
                             text: 'Sair',
                         },
                     ]}>
-                    <ProfileContainer>
-                        <span>Leonardo C.</span>
-                        <div>
-                            <ProfileAvatar></ProfileAvatar>
-                            <MdExpandMore size={24} />
-                        </div>
-                    </ProfileContainer>
+                    {userData ? (
+                        <ProfileContainer>
+                            <span>{userData.firstName}</span>
+                            <div>
+                                <ProfileAvatar
+                                    imageURL={
+                                        userData.imageURL &&
+                                        media('user', userData.imageURL, true)
+                                    }
+                                />
+                                <MdExpandMore size={24} />
+                            </div>
+                        </ProfileContainer>
+                    ) : (
+                        <ProfileContainerShimmerContainer>
+                            <LineShimmer width='90px' />
+                            <div>
+                                <CircleShimmer width='50px' height='50px' />
+                                <CircleShimmer width='24px' height='24px' />
+                            </div>
+                        </ProfileContainerShimmerContainer>
+                    )}
                 </Dropdown>
             </Content>
         </Container>

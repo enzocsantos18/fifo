@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Nav from './components/Nav';
 import Login from './pages/Login';
 import MySchedules from './pages/MySchedules';
 import Register from './pages/Register';
@@ -10,6 +11,7 @@ import SelectStation from './pages/SelectStation';
 const Routes: React.FC = () => {
     return (
         <BrowserRouter>
+            <Nav />
             <Switch>
                 <Route path='/' exact component={Login} />
                 <Route path='/register' component={Register} />

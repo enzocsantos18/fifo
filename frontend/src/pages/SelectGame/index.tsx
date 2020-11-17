@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MdSearch } from 'react-icons/md';
 import TextInput from '../../components/Input/Text';
-import { Wrapper, Container, GameList, GameBanner, GameBannerShimmerContainer } from './styles';
+import {
+    Wrapper,
+    Container,
+    GameList,
+    GameBanner,
+    GameBannerShimmerContainer,
+} from './styles';
 import { useHistory } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { CircleSpinner } from 'react-spinners-kit';
@@ -105,7 +111,7 @@ const SelectGame: React.FC = () => {
                                 <GameBanner
                                     onClick={() => handleClick(game._id)}
                                     key={game.name}>
-                                    <img src={media(game.imageURL)} />
+                                    <img src={media('game', game.imageURL)} />
                                 </GameBanner>
                             ))}
                         </>
