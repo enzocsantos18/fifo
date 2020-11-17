@@ -15,7 +15,7 @@ export const Container = styled.div`
     box-shadow: 1px 1px 4px rgba(0,0,0, .1);
 
     & h1 {
-        margin-bottom: 0;
+        margin-bottom: 20px;
     }
 
     & h2 {

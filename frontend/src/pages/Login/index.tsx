@@ -5,12 +5,17 @@ import { Form } from '@unform/web';
 import API from '../../services/api';
 import Auth from '../../services/auth';
 import TextInput from '../../components/Input/Text';
-import { MdArrowForward, MdDrafts } from 'react-icons/md';
+import {
+    MdArrowForward,
+    MdDrafts,
+    MdSentimentDissatisfied,
+} from 'react-icons/md';
 import Button from '../../components/Input/Button';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { StageSpinner } from 'react-spinners-kit';
 import Modal from '../../components/Modal';
+import { useHistory } from 'react-router-dom';
 
 interface IFormData {
     email: string;
@@ -19,7 +24,10 @@ interface IFormData {
 
 const Login: React.FC = () => {
     const [isLoading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [isErrored, setErrored] = useState(false);
     const formRef = useRef<FormHandles>(null);
+    const history = useHistory();
 
     async function handleSubmit(data: IFormData) {
         const schema = Yup.object().shape({
@@ -42,9 +50,11 @@ const Login: React.FC = () => {
             })
                 .then(({ data }) => {
                     Auth.setToken(data['token']);
+                    history.push('/account/schedules');
                 })
                 .catch(err => {
-                    console.log(err);
+                    setError(err['error']);
+                    setErrored(true);
                 })
                 .finally(() => {
                     setLoading(false);
@@ -64,7 +74,6 @@ const Login: React.FC = () => {
             <Wrapper>
                 <Container>
                     <h1>Login</h1>
-                    <h2>Olá, faça login no FIFO</h2>
                     <Form onSubmit={handleSubmit} ref={formRef}>
                         <TextInput
                             name='email'
@@ -98,7 +107,11 @@ const Login: React.FC = () => {
                     </Form>
                 </Container>
             </Wrapper>
-            <Modal isVisible={true}></Modal>
+            <Modal isVisible={isErrored}>
+                <MdSentimentDissatisfied size={70} />
+                <h3>Usuário ou senha inválidos!</h3>
+                <Button onClick={() => setErrored(false)}>OK</Button>
+            </Modal>
         </>
     );
 };
