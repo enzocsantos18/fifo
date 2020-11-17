@@ -26,6 +26,8 @@ export default createGlobalStyle`
         --light1: #F8F9FB;
         --light2: #e4e4e4;
         --red1: #FF9999;
+        --shimmer0: #F8F9FB;
+        --shimmer1: #fff;
     }
 
     label {
@@ -39,7 +41,7 @@ export default createGlobalStyle`
 
     input {
         border: 2px solid var(--light1);
-        border-radius: 4px;
+        border-radius: 8px;
         height: 28px;
         transition: all .2s ease;
         color: var(--text1);
@@ -72,8 +74,17 @@ export default createGlobalStyle`
         font-size: 14px;
         color: var(--red1);
         margin-left: 5px;
-        font-weight: 700;
-        margin-bottom: 20px;    
+        margin-top: 5px;
     }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -468px 0;
+        }
+        
+        100% {
+            background-position: 468px 0; 
+        }
+    }   
 
 `;
