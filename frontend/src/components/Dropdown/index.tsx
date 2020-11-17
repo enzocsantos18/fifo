@@ -6,6 +6,7 @@ interface IItem {
     text: string;
     route?: string;
     icon?: JSX.Element;
+    onClick?(): void;
 }
 
 interface IProps {
@@ -53,7 +54,9 @@ const Dropdown: React.FC<IProps> = ({ children, items, width, top }) => {
                         top: top ? top : '0',
                     }}>
                     {items.map(item => (
-                        <Item key={item.text}>
+                        <Item
+                            key={item.text}
+                            onClick={() => item.onClick && item.onClick()}>
                             {item.icon && item.icon}
                             {item.text}
                         </Item>
