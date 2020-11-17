@@ -3,12 +3,15 @@ import User from '../models/User';
 import * as Yup from 'yup';
 import bcrypt from 'bcryptjs';
 import { v4 as uuid } from 'uuid';
+import fs from 'fs';
+import sharp from 'sharp';
+import path from 'path';
 
 class UserController {
     public async index(req: Request, res: Response): Promise<Response> {
-        const users = await User.find();
+        const user = await User.findById(res.locals['user'].id);
 
-        return res.json(users);
+        return res.json(user);
     }
 
     public async create(req: Request, res: Response): Promise<Response> {
@@ -34,14 +37,31 @@ class UserController {
             err.inner.forEach(error => {
                 errors[error.path] = error.message;
             });
+            fs.unlinkSync(req.file.filename);
             return res.status(400).send(errors);
         }
 
         try {
-            if (await User.findOne({ email }))
+            if (await User.findOne({ email })) {
+                fs.unlinkSync(req.file.filename);
                 return res.status(400).send({ error: 'User already exists' });
+            }
 
-            const user = await User.create(req.body);
+            await sharp(req.file.path, {
+                failOnError: false,
+            })
+                .resize(50)
+                .withMetadata()
+                .toFile(
+                    path.resolve(
+                        req.file.destination,
+                        'thumbnail-' + req.file.filename
+                    )
+                );
+            const user = await User.create({
+                ...req.body,
+                imageURL: req.file.filename,
+            });
 
             user.password = undefined;
 
