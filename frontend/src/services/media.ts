@@ -1,5 +1,11 @@
 export const MEDIA_URL = 'http://localhost:3333/public/uploads/';
 
-export const media = (path: string) => {
-    return MEDIA_URL + path;
+export const media = (
+    folder: string,
+    filename: string,
+    isThumbnail: boolean = false
+) => {
+    return `${MEDIA_URL}/${folder}/${
+        isThumbnail ? 'thumbnail-' : ''
+    }${filename}`;
 };
