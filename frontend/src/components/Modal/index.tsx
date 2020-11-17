@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence, AnimateSharedLayout } from 'framer-motion';
+import React from 'react';
+import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
 
 import { Wrapper, Container } from './styles';
-import Button from '../Input/Button';
 
 interface IProps {
     isVisible: boolean;
+    width?: string;
 }
 
-const Modal: React.FC<IProps> = ({ children, isVisible }) => {
+const Modal: React.FC<IProps> = ({ children, isVisible, width }) => {
     return (
         <AnimateSharedLayout type='crossfade'>
             <AnimatePresence>
@@ -20,7 +20,8 @@ const Modal: React.FC<IProps> = ({ children, isVisible }) => {
                         <Container
                             initial={{ opacity: 0, translateY: 200 }}
                             animate={{ opacity: 1, translateY: 0 }}
-                            exit={{ opacity: 0, translateY: 200 }}>
+                            exit={{ opacity: 0, translateY: 200 }}
+                            style={{ width: width ? width : '300px' }}>
                             {children}
                         </Container>
                     </Wrapper>
