@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -26,7 +27,7 @@ export const LinkList = styled.div`
     align-items: center;
 `;
 
-export const LinkItem = styled.a`
+export const LinkItem = styled(Link)`
     font-size: 18px;
     color: var(--text0);
     font-weight: 700;
@@ -48,7 +49,7 @@ export const ProfileContainer = styled.div`
     justify-content: space-between;
     padding: 20px;
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
         background: var(--primary2);
@@ -59,20 +60,32 @@ export const ProfileContainer = styled.div`
         align-items: center;
     }
 
-    & span{
+    & span {
         color: #fff;
         font-weight: 500;
     }
 
     & svg {
         color: #fff;
-        margin-left: 10px;  
+        margin-left: 10px;
     }
 `;
 
-export const ProfileAvatar = styled.div`
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #c4c4c4;
+export const ProfileContainerShimmerContainer = styled.div`
+    background: var(--primary1);
+    width: 270px;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+
+    & div {
+        display: flex;
+        align-items: center;
+
+        & div:last-child {
+            margin-left: 10px;
+        }
+    }
 `;
