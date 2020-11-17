@@ -102,97 +102,17 @@ class ScheduleController {
     }
 
     public async delete(req: Request, res: Response): Promise<Response> {
-
         const user = await User.findById(res.locals['user'].id);
 
         try {
-                await Schedule.findOneAndDelete({
+            await Schedule.findOneAndDelete({
                 user,
-                _id: req.params.id
+                _id: req.params.id,
             });
 
             return res.status(201).send('Schedule deleted.');
-        } catch(err) {
-            return res.status(400).send({ err: 'Schedule not found.'})
-        }
-
-
-    }
-
-    public async update(req: Request, res: Response): Promise<Response> {
-        const schema = Yup.object().shape({
-            date: Yup.date().required('Data é obrigatório.'),
-            time: Yup.number()
-                .positive('O Horário precisa ser positivo.')
-                .oneOf(
-                    [15, 30, 45, 60],
-                    'O período precisa ser 15, 30, 45 ou 60 minutos.'
-                ),
-        });
-
-        try {
-            await schema.validate(req.body, {
-                abortEarly: false,
-            });
         } catch (err) {
-            const errors = {};
-            err.inner.forEach(error => {
-                errors[error.path] = error.message;
-            });
-            return res.status(400).send(errors);
-        }
-
-        const { date, time } = req.body;
-
-        const idSchedule = req.params.id;
-
-        try {
-            const actualSchedule = await Schedule.findById(idSchedule);
-
-            const previousSchedule = await Schedule.findOne({
-                game: actualSchedule.game, 
-                station: actualSchedule.station,
-                date: { $lte: new Date(date) },
-            });
-
-            if(previousSchedule){
-                let previousScheduleEnd = moment(previousSchedule.date)
-                                        .add(previousSchedule.time as moment.DurationInputArg1, 'minutes');
-
-
-                if (previousScheduleEnd >= moment(date)) {
-                        return res
-                            .status(400)
-                            .send({ error: 'Conflito com o agendamento anterior. Escolha outro horário.' });
-                }
-            }
-
-            const nextSchedule = await Schedule.findOne({
-                game: actualSchedule.game, 
-                station: actualSchedule.station,
-                date: { $gte: new Date(date) },
-            });
-
-            if(nextSchedule){
-                let newScheduleEnd = moment(date)
-                                        .add(time as moment.DurationInputArg1, 'minutes');
-
-                if (newScheduleEnd > moment(nextSchedule.date)) {
-                    return res
-                        .status(400)
-                        .send({ error: 'Conflito com o próximo agendamento. Escolha outro horário.' });
-                }
-            }
-
-            const schedule = await Schedule.findByIdAndUpdate(idSchedule, {
-                date: date,
-                time: time
-            });
-
-            return res.json(schedule);
-
-        } catch (err) {
-            return res.status(400).send({ error: 'Atualização do agendamento não realizado.' });
+            return res.status(400).send({ err: 'Schedule not found.' });
         }
     }
 }
