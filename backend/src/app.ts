@@ -14,4 +14,4 @@ app.use(express.json());
 app.use(helmet());
 app.use(router);
 app.use('/public', express.static(path.join(__dirname, '..', 'public')));
-app.listen(3333);
+app.listen(process.env['SERVER_PORT']);

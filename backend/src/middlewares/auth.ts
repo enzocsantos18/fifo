@@ -24,7 +24,7 @@ export default function AuthMiddleware(
 
     const [, token] = parts;
 
-    jwt.verify(token, 'JWTSECRET', (err, decoded) => {
+    jwt.verify(token, process.env['JWT_SECRET'], (err, decoded) => {
         if (err) {
             return res.status(401).send({
                 error: 'Invalid token',
