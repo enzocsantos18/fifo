@@ -19,11 +19,14 @@ export const Container = styled(motion.div)`
 export const GameList = styled.div`
     display: flex;
     margin-top: 30px;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    margin-right: -10px;
 `;
 
 export const GameBanner = styled.div`
     height: 200px;
-    margin-right: 20px;
+    margin: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
 
@@ -34,4 +37,10 @@ export const GameBanner = styled.div`
     &:hover {
         transform: translateY(-5px);
     }
+`;
+
+export const GameBannerShimmerContainer = styled.div`
+    height: 200px;
+    margin: 10px;
+    width: 150px;
 `;
