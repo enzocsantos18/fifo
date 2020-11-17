@@ -22,6 +22,9 @@ const UserSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
+    imageURL: {
+        type: String,
+    },
 });
 
 UserSchema.pre('save', async function (this: IUser, next) {
