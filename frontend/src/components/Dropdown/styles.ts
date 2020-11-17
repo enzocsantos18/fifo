@@ -10,7 +10,7 @@ export const Container = styled(motion.div)`
     background: #fff;
     border-radius: 8px;
     right: 0;
-    top: 20px;
+    top: 0;
     padding: 10px 20px;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
     display: flex;
