@@ -9,7 +9,7 @@ export default function AuthMiddleware(
     const header = req.headers['authorization'];
 
     if (!header) {
-        res.status(401).send({
+        return res.status(401).send({
             error: 'Invalid header',
         });
     }
@@ -17,7 +17,7 @@ export default function AuthMiddleware(
     const parts = header.split(' ');
 
     if (parts.length !== 2) {
-        res.status(401).send({
+        return res.status(401).send({
             error: 'Invalid token',
         });
     }
@@ -26,7 +26,7 @@ export default function AuthMiddleware(
 
     jwt.verify(token, 'JWTSECRET', (err, decoded) => {
         if (err) {
-            res.status(401).send({
+            return res.status(401).send({
                 error: 'Invalid token',
             });
         }
