@@ -15,6 +15,9 @@ import {
 import moment from 'moment';
 import API from '../../services/api';
 import Dropdown from '../../components/Dropdown';
+import Modal from '../../components/Modal';
+import { ModalActions } from './../../components/Modal/styles';
+import Button from './../../components/Input/Button/index';
 
 interface IScheduleStation {
     _id: string;
@@ -43,6 +46,8 @@ interface IDay {
 
 const MySchedules: React.FC = () => {
     const [currentDays, setCurrentDays] = useState<IDay[]>([]);
+    const [deletingScheduleId, setDeletingScheduleId] = useState('');
+    const [isDeletingSchedule, setDeletingSchedule] = useState(false);
 
     async function loadDays() {
         const { data: schedules } = await API.get<ISchedule[]>('schedules');
@@ -69,7 +74,7 @@ const MySchedules: React.FC = () => {
             currentDate.add(i, 'days');
 
             const day: IDay = {
-                label: dayLabels[i],
+                label: dayLabels[currentDate.day()],
                 date: currentDate.format('DD/MM/YY'),
                 schedules: [],
             };
@@ -90,54 +95,100 @@ const MySchedules: React.FC = () => {
         setCurrentDays(days);
     }
 
+    function handleScheduleDelete() {
+        setDeletingSchedule(false);
+        API.delete(`schedules/${deletingScheduleId}`)
+            .then(() => {
+                setCurrentDays(
+                    currentDays.map(day => {
+                        const newSchedules = day.schedules.filter(
+                            schedule => schedule._id !== deletingScheduleId
+                        );
+                        return { ...day, schedules: newSchedules };
+                    })
+                );
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
     useEffect(() => {
         loadDays();
     }, []);
 
     return (
-        <Container>
-            <DayList>
-                {currentDays.map(day => (
-                    <DaySchedules key={day.date}>
-                        <h2>{day.label}</h2>
-                        <small>Dia {day.date}</small>
-                        {day.schedules.length > 0 ? (
-                            <ScheduleList>
-                                {day.schedules.map(schedule => (
-                                    <Schedule key={schedule._id}>
-                                        <ScheduleTime>
-                                            <span>{schedule.horary}</span>
-                                            <ScheduleJoint />
-                                        </ScheduleTime>
-                                        <ScheduleDetails>
-                                            <ScheduleInfo>
-                                                <span>
-                                                    {schedule.game.name}
-                                                </span>
-                                                <span>
-                                                    {schedule.station.name}
-                                                </span>
-                                            </ScheduleInfo>
-                                            <Dropdown
-                                                items={[
-                                                    {
-                                                        text: 'Excluir',
-                                                        icon: <MdRemoveCircleOutline />
-                                                    },
-                                                ]}>
-                                                <MdMoreVert size={24} />
-                                            </Dropdown>
-                                        </ScheduleDetails>
-                                    </Schedule>
-                                ))}
-                            </ScheduleList>
-                        ) : (
-                            <p>Você não tem nenhum horário marcado esse dia!</p>
-                        )}
-                    </DaySchedules>
-                ))}
-            </DayList>
-        </Container>
+        <>
+            <Container>
+                <DayList>
+                    {currentDays.map(day => (
+                        <DaySchedules key={day.date}>
+                            <h2>{day.label}</h2>
+                            <small>Dia {day.date}</small>
+                            {day.schedules.length > 0 ? (
+                                <ScheduleList>
+                                    {day.schedules.map(schedule => (
+                                        <Schedule key={schedule._id}>
+                                            <ScheduleTime>
+                                                <span>{schedule.horary}</span>
+                                                <ScheduleJoint />
+                                            </ScheduleTime>
+                                            <ScheduleDetails>
+                                                <ScheduleInfo>
+                                                    <span>
+                                                        {schedule.game.name}
+                                                    </span>
+                                                    <span>
+                                                        {schedule.station.name}
+                                                    </span>
+                                                </ScheduleInfo>
+                                                <Dropdown
+                                                    width='120px'
+                                                    items={[
+                                                        {
+                                                            text: 'Cancelar',
+                                                            icon: (
+                                                                <MdRemoveCircleOutline />
+                                                            ),
+                                                            onClick: () => {
+                                                                setDeletingSchedule(
+                                                                    true
+                                                                );
+                                                                setDeletingScheduleId(
+                                                                    schedule._id
+                                                                );
+                                                            },
+                                                        },
+                                                    ]}>
+                                                    <MdMoreVert size={24} />
+                                                </Dropdown>
+                                            </ScheduleDetails>
+                                        </Schedule>
+                                    ))}
+                                </ScheduleList>
+                            ) : (
+                                <p>
+                                    Você não tem nenhum horário marcado esse
+                                    dia!
+                                </p>
+                            )}
+                        </DaySchedules>
+                    ))}
+                </DayList>
+            </Container>
+            <Modal isVisible={isDeletingSchedule} width='400px'>
+                <h3>Tem certeza que deseja cancelar esse horário?</h3>
+
+                <ModalActions>
+                    <Button
+                        onClick={() => setDeletingSchedule(false)}
+                        variant='secondary'>
+                        Não
+                    </Button>
+                    <Button onClick={handleScheduleDelete}>Sim</Button>
+                </ModalActions>
+            </Modal>
+        </>
     );
 };
 

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MdSearch } from 'react-icons/md';
 import TextInput from '../../components/Input/Text';
-import { Wrapper, Container, GameList, GameBanner } from './styles';
+import { Wrapper, Container, GameList, GameBanner, GameBannerShimmerContainer } from './styles';
 import { useHistory } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { CircleSpinner } from 'react-spinners-kit';
 import API from '../../services/api';
 import { media } from '../../services/media';
+import { Form } from '@unform/web';
+import { LineShimmer } from '../../components/Shimmer/';
 
 interface IGame {
     _id: string;
@@ -30,8 +32,10 @@ const SelectGame: React.FC = () => {
     function loadGames() {
         API.get('games')
             .then(({ data }) => {
-                setStaticGames(data);
-                setGames(data);
+                setTimeout(() => {
+                    setStaticGames(data);
+                    setGames(data);
+                }, 500);
             })
             .catch(err => {
                 alert('Não foi possível carregar os jogos!');
@@ -70,33 +74,53 @@ const SelectGame: React.FC = () => {
 
     return (
         <Wrapper>
-            <Container
-                initial={{ opacity: 0, transform: 'translateX(-200px)' }}
-                animate={{ opacity: 1, transform: 'translateX(0px)' }}
-                transition={{ duration: 0.5 }}>
+            <Container>
                 <h1>Qual jogo você quer jogar?</h1>
-                <TextInput
-                    placeholder='Pesquise um jogo...'
-                    onChange={e => setSearchQuery(e.target.value.toLowerCase())}
-                    icon={
-                        isSearching ? (
-                            <CircleSpinner size={20} color='#626770' />
-                        ) : (
-                            <MdSearch size={20} />
-                        )
-                    }
-                />
+                <Form onSubmit={search}>
+                    <TextInput
+                        name='game'
+                        placeholder='Pesquise um jogo...'
+                        onChange={e =>
+                            setSearchQuery(e.target.value.toLowerCase())
+                        }
+                        icon={
+                            isSearching ? (
+                                <CircleSpinner size={20} color='#626770' />
+                            ) : (
+                                <MdSearch size={20} />
+                            )
+                        }
+                    />
+                </Form>
                 <GameList>
-                    {games.map(game => (
-                        <GameBanner
-                            onClick={() => handleClick(game._id)}
-                            key={game.name}>
-                            <img src={media(game.imageURL)} />
-                        </GameBanner>
-                    ))}
+                    {staticGames.length == 0 ? (
+                        <>
+                            {[...Array(5)].map((element, index) => (
+                                <GameBannerShimmer key={index} />
+                            ))}
+                        </>
+                    ) : (
+                        <>
+                            {games.map(game => (
+                                <GameBanner
+                                    onClick={() => handleClick(game._id)}
+                                    key={game.name}>
+                                    <img src={media(game.imageURL)} />
+                                </GameBanner>
+                            ))}
+                        </>
+                    )}
                 </GameList>
             </Container>
         </Wrapper>
+    );
+};
+
+const GameBannerShimmer: React.FC = () => {
+    return (
+        <GameBannerShimmerContainer>
+            <LineShimmer height='200px' width='150px' />
+        </GameBannerShimmerContainer>
     );
 };
 

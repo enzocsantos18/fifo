@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 
 type Variant = 'danger' | 'success' | 'warning' | undefined;
 
-
 interface IWrapperProps {
     hasIcon: boolean;
     variant: Variant;
@@ -10,6 +9,7 @@ interface IWrapperProps {
 
 export const Wrapper = styled.div<IWrapperProps>`
     position: relative;
+    margin-bottom: 10px;
 
     ${p =>
         p.hasIcon &&
@@ -27,19 +27,30 @@ export const Wrapper = styled.div<IWrapperProps>`
         position: absolute;
         top: 10px;
         right: 20px;
+        z-index: 5;
+        cursor: pointer;
     }
 
-    ${p => p.variant === 'danger' && css`
-        & input {
-            border-color: var(--red1);
-        }
-
-        & input:focus {
-            border-color: var(--red1);
-        }
-
+    & span:hover {
         & svg {
-            color: var(--red1);
+            color: var(--text1);
         }
-    `}
+    }
+
+    ${p =>
+        p.variant === 'danger' &&
+        css`
+            & input {
+                border-color: var(--red1);
+            }
+
+            & input:focus {
+                border-color: var(--red1);
+            }
+
+            & svg,
+            & input::placeholder {
+                color: var(--red1);
+            }
+        `}
 `;
