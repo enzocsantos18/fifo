@@ -109,10 +109,7 @@ const Schedule: React.FC = () => {
     return (
         <>
             <Wrapper>
-                <Container
-                    initial={{ opacity: 0, transform: 'translateX(-200px)' }}
-                    animate={{ opacity: 1, transform: 'translateX(0px)' }}
-                    transition={{ duration: 0.5 }}>
+                <Container>
                     <Form onSubmit={handleSubmit} ref={formRef}>
                         <h1>Agendar</h1>
 
