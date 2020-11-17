@@ -43,6 +43,15 @@ export const Station = styled.div`
     }
 `;
 
+export const StationShimmerContainer = styled.div`
+    width: 160px;
+    height: 200px;
+
+    & div {
+        margin-bottom: 10px;
+    }
+`;
+
 export const Actions = styled.div`
     display: flex;
     justify-content: space-between;

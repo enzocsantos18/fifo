@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Wrapper, Container, StationList, Station, Actions } from './styles';
+import { Wrapper, Container, StationList, Station, Actions, StationShimmerContainer } from './styles';
 import { MdMemory, MdArrowBack } from 'react-icons/md';
 import { useHistory, useLocation } from 'react-router-dom';
 import Button from '../../components/Input/Button';
 import API from '../../services/api';
+import { LineShimmer } from '../../components/Shimmer';
 
 interface ILocationState {
     game?: string;
@@ -27,7 +28,7 @@ const SelectStation: React.FC = () => {
     function handleClick(id: string) {
         history.push('/schedule/final', {
             game: location.state.game,
-            station: id
+            station: id,
         });
     }
 
@@ -39,18 +40,24 @@ const SelectStation: React.FC = () => {
         }
 
         API.get(`games/${location.state.game}/stations`).then(({ data }) => {
-            setGameStations(data);
+            setTimeout(() => {
+                setGameStations(data);
+            }, 200);
         });
     }, []);
 
     return (
         <Wrapper>
-            <Container
-                initial={{ opacity: 0, transform: 'translateX(-100px)' }}
-                animate={{ opacity: 1, transform: 'translateX(0px)' }}
-                transition={{ duration: 0.5 }}>
+            <Container>
                 <h1>Aonde você quer jogar?</h1>
                 <StationList>
+                    {gameStations.length == 0 && (
+                        <>
+                            {[...Array(2)].map(() => (
+                                <StationShimmer />
+                            ))}
+                        </>
+                    )}
                     {gameStations.map(gameStation => (
                         <Station
                             onClick={() => handleClick(gameStation.station._id)}
@@ -70,6 +77,15 @@ const SelectStation: React.FC = () => {
                 </Actions>
             </Container>
         </Wrapper>
+    );
+};
+
+const StationShimmer: React.FC = () => {
+    return (
+        <StationShimmerContainer>
+            <LineShimmer width='160px' height='140px' />
+            <LineShimmer width='160px' height='50px' />
+        </StationShimmerContainer>
     );
 };
 
