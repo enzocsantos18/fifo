@@ -5,17 +5,30 @@ import ScheduleController from './controllers/ScheduleController';
 import AuthController from './controllers/AuthController';
 import StationController from './controllers/StationController';
 import AuthMiddleware from './middlewares/auth';
-import Storage from './config/storage';
+import { GameBannerStorage, UserAvatarStorage } from './config/storage';
 
 const router = Router();
 
-router.post('/users', UserController.create);
+router.get('/users', AuthMiddleware, UserController.index);
+router.post(
+    '/users',
+    [UserAvatarStorage.single('image')],
+    UserController.create
+);
 router.post('/users/forgotpassword', UserController.forgotPassowrd);
-router.post('/users/changepassword', AuthMiddleware, UserController.changePassword);
+router.post(
+    '/users/changepassword',
+    AuthMiddleware,
+    UserController.changePassword
+);
 router.delete('/users', AuthMiddleware, UserController.deleteUser);
 
 router.get('/games', GameController.index);
-router.post('/games', [Storage.single('image')], GameController.create);
+router.post(
+    '/games',
+    [GameBannerStorage.single('image')],
+    GameController.create
+);
 router.post('/games/stations', StationController.create);
 router.get('/games/:id/stations', StationController.indexByGame);
 

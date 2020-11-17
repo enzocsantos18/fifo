@@ -29,10 +29,14 @@ class AuthController {
                     {
                         id: user._id,
                     },
-                    'JWTSECRET'
+                    process.env['JWT_SECRET']
                 );
+
+                user.password = undefined;
+                
                 return res.json({
                     token,
+                    user,
                 });
             }
 
