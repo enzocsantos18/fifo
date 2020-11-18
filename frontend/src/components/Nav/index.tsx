@@ -62,13 +62,14 @@ const Nav: React.FC = () => {
                     ]}>
                     {userData ? (
                         <ProfileContainer>
-                            <span>{userData.firstName}</span>
+                            <span>{userData.shortName}</span>
                             <div>
                                 <ProfileAvatar
                                     imageURL={
                                         userData.imageURL &&
                                         media('user', userData.imageURL, true)
                                     }
+                                    username={userData.name}
                                 />
                                 <MdExpandMore size={24} />
                             </div>
