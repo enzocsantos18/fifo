@@ -13,15 +13,22 @@ function App() {
             API.get('users')
                 .then(({ data }) => {
                     const nameParts = data['name'].split(' ');
+
+                    const shortName =
+                        nameParts.length > 1
+                            ? `${
+                                  nameParts[0]
+                              } ${(nameParts[1][0] as string).toUpperCase()}.`
+                            : nameParts[0];
+                            
                     setUserData({
                         ...data,
-                        firstName: `${
-                            nameParts[0]
-                        } ${(nameParts[1][0] as string).toUpperCase()}.`,
+                        shortName,
                     });
                 })
                 .catch(() => {
                     Auth.destroyToken();
+                    window.location.reload();
                 });
         }
     }

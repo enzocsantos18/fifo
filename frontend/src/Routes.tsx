@@ -34,7 +34,7 @@ const PrivateRoute: React.FC<RouteProps> = props => {
 const GuestRoute: React.FC<RouteProps> = props => {
     if (Auth.hasToken()) {
         const component = () => (
-            <Redirect to={{ pathname: '/dashboard', state: { from: props.location } }} />
+            <Redirect to={{ pathname: '/', state: { from: props.location } }} />
         );
         return <Route {...props} component={component} />;
     }
