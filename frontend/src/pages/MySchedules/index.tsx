@@ -18,6 +18,7 @@ import Dropdown from '../../components/Dropdown';
 import Modal from '../../components/Modal';
 import { ModalActions } from './../../components/Modal/styles';
 import Button from './../../components/Input/Button/index';
+import { LineShimmer } from '../../components/Shimmer';
 
 interface IScheduleStation {
     _id: string;
@@ -121,59 +122,68 @@ const MySchedules: React.FC = () => {
         <>
             <Container>
                 <DayList>
-                    {currentDays.map(day => (
-                        <DaySchedules key={day.date}>
-                            <h2>{day.label}</h2>
-                            <small>Dia {day.date}</small>
-                            {day.schedules.length > 0 ? (
-                                <ScheduleList>
-                                    {day.schedules.map(schedule => (
-                                        <Schedule key={schedule._id}>
-                                            <ScheduleTime>
-                                                <span>{schedule.horary}</span>
-                                                <ScheduleJoint />
-                                            </ScheduleTime>
-                                            <ScheduleDetails>
-                                                <ScheduleInfo>
-                                                    <span>
-                                                        {schedule.game.name}
-                                                    </span>
-                                                    <span>
-                                                        {schedule.station.name}
-                                                    </span>
-                                                </ScheduleInfo>
-                                                <Dropdown
-                                                    width='150px'
-                                                    items={[
-                                                        {
-                                                            text: 'Cancelar',
-                                                            icon: 
-                                                                <MdRemoveCircleOutline size={20} />
-                                                            ,
-                                                            onClick: () => {
-                                                                setDeletingSchedule(
-                                                                    true
-                                                                );
-                                                                setDeletingScheduleId(
-                                                                    schedule._id
-                                                                );
-                                                            },
-                                                        },
-                                                    ]}>
-                                                    <MdMoreVert size={24} />
-                                                </Dropdown>
-                                            </ScheduleDetails>
-                                        </Schedule>
-                                    ))}
-                                </ScheduleList>
-                            ) : (
-                                <p>
-                                    Você não tem nenhum horário marcado esse
-                                    dia!
-                                </p>
-                            )}
-                        </DaySchedules>
-                    ))}
+                    {currentDays.length > 0 ? (
+                        <>
+                            {currentDays.map(day => (
+                                <DaySchedules key={day.date}>
+                                    <h2>{day.label}</h2>
+                                    <small>Dia {day.date}</small>
+                                    {day.schedules.length > 0 ? (
+                                        <ScheduleList>
+                                            {day.schedules.map(schedule => (
+                                                <Schedule key={schedule._id}>
+                                                    <ScheduleTime>
+                                                        <span>{schedule.horary}</span>
+                                                        <ScheduleJoint />
+                                                    </ScheduleTime>
+                                                    <ScheduleDetails>
+                                                        <ScheduleInfo>
+                                                            <span>
+                                                                {schedule.game.name}
+                                                            </span>
+                                                            <span>
+                                                                {schedule.station.name}
+                                                            </span>
+                                                        </ScheduleInfo>
+                                                        <Dropdown
+                                                            width='150px'
+                                                            items={[
+                                                                {
+                                                                    text: 'Cancelar',
+                                                                    icon: (
+                                                                        <MdRemoveCircleOutline
+                                                                            size={20}
+                                                                        />
+                                                                    ),
+                                                                    onClick: () => {
+                                                                        setDeletingSchedule(
+                                                                            true
+                                                                        );
+                                                                        setDeletingScheduleId(
+                                                                            schedule._id
+                                                                        );
+                                                                    },
+                                                                },
+                                                            ]}>
+                                                            <MdMoreVert size={24} />
+                                                        </Dropdown>
+                                                    </ScheduleDetails>
+                                                </Schedule>
+                                            ))}
+                                        </ScheduleList>
+                                    ) : (
+                                        <p>
+                                            Você não tem nenhum horário marcado esse dia!
+                                        </p>
+                                    )}
+                                </DaySchedules>
+                            ))}
+                        </>
+                    ) : (
+                        [...Array(7)].map((element, index) => (
+                            <DaySchedulesShimmer key={index} />
+                        ))
+                    )}
                 </DayList>
             </Container>
             <Modal isVisible={isDeletingSchedule} width='400px'>
@@ -191,5 +201,13 @@ const MySchedules: React.FC = () => {
         </>
     );
 };
+
+const DaySchedulesShimmer: React.FC = () => (
+    <DaySchedules>
+        <LineShimmer style={{ marginTop: 15 }} height='24px' />
+        <LineShimmer style={{ marginTop: 8 }} height='12px' />
+        <LineShimmer style={{ marginTop: 20 }} height='12px' />
+    </DaySchedules>
+);
 
 export default MySchedules;
