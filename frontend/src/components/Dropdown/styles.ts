@@ -11,7 +11,6 @@ export const Container = styled(motion.div)`
     border-radius: 8px;
     right: 0;
     top: 0;
-    padding: 10px 20px;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
@@ -24,15 +23,31 @@ export const Item = styled.div`
     font-size: 16px;
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    width: 100%;
+    margin: 0 5px;
+    padding: 10px 20px;
+    border-radius: 8px;
+
+    &:hover {
+        background: var(--light1);
+    }
 
     & svg {
-        color: var(--text0);
+        color: var(--text0) !important;
         margin-right: 10px;
+        pointer-events: none;
     }
 
     &:hover {
+        color: var(--text1);
+    }
+
+    & a {
+        text-decoration: none;
+    }
+
+    & a:active {
         color: var(--text1);
     }
 `;

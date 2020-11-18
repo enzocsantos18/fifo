@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Wrapper, Container, Item } from './styles';
 
@@ -20,10 +21,7 @@ const Dropdown: React.FC<IProps> = ({ children, items, width, top }) => {
     const container = useRef<HTMLDivElement | null>(null);
 
     function handleClickOutside(e: MouseEvent) {
-        if (
-            container.current &&
-            !container.current.contains(e.target as Element)
-        ) {
+        if (container.current && !container.current.contains(e.target as Element)) {
             setVisible(false);
         }
     }
@@ -58,7 +56,12 @@ const Dropdown: React.FC<IProps> = ({ children, items, width, top }) => {
                             key={item.text}
                             onClick={() => item.onClick && item.onClick()}>
                             {item.icon && item.icon}
-                            {item.text}
+
+                            {item.route ? (
+                                <Link to={item.route}>{item.text}</Link>
+                            ) : (
+                                <>{item.text}</>
+                            )}
                         </Item>
                     ))}
                 </Container>

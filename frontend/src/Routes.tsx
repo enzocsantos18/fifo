@@ -1,5 +1,11 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import {
+    BrowserRouter,
+    Switch,
+    Route,
+    RouteProps,
+    Redirect,
+} from 'react-router-dom';
 import Nav from './components/Nav';
 import Login from './pages/Login';
 import MySchedules from './pages/MySchedules';
@@ -7,18 +13,46 @@ import Register from './pages/Register';
 import Schedule from './pages/Schedule';
 import SelectGame from './pages/SelectGame';
 import SelectStation from './pages/SelectStation';
+import Auth from './services/auth';
+
+const PrivateRoute: React.FC<RouteProps> = props => {
+    if (!Auth.hasToken()) {
+        const component = () => (
+            <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
+        );
+        return <Route {...props} component={component} />;
+    }
+
+    return (
+        <>
+            <Nav />
+            <Route {...props} />
+        </>
+    );
+};
+
+const GuestRoute: React.FC<RouteProps> = props => {
+    if (Auth.hasToken()) {
+        const component = () => (
+            <Redirect to={{ pathname: '/dashboard', state: { from: props.location } }} />
+        );
+        return <Route {...props} component={component} />;
+    }
+
+    return <Route {...props} />;
+};
 
 const Routes: React.FC = () => {
     return (
         <BrowserRouter>
-            <Nav />
             <Switch>
-                <Route path='/' exact component={Login} />
-                <Route path='/register' component={Register} />
-                <Route path='/schedule/game' component={SelectGame} />
-                <Route path='/schedule/station' component={SelectStation} />
-                <Route path='/schedule/final' component={Schedule} />
-                <Route path='/account/schedules' component={MySchedules} />
+                <GuestRoute path='/login' exact component={Login} />
+                <GuestRoute path='/register' component={Register} />
+                <PrivateRoute path='/schedule/game' component={SelectGame} />
+                <PrivateRoute path='/schedule/station' component={SelectStation} />
+                <PrivateRoute path='/schedule/final' component={Schedule} />
+                <PrivateRoute path='/account/schedules' component={MySchedules} />
+                <PrivateRoute path='/' component={MySchedules} exact />
             </Switch>
         </BrowserRouter>
     );
