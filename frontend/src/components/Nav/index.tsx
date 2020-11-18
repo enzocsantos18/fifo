@@ -1,6 +1,13 @@
 import React, { useContext } from 'react';
-import { MdExpandMore } from 'react-icons/md';
+import {
+    MdAccountCircle,
+    MdExpandMore,
+    MdFiberManualRecord,
+    MdClose,
+    MdWatchLater,
+} from 'react-icons/md';
 import { UserContext } from '../../contexts/User';
+import Auth from '../../services/auth';
 import { media } from '../../services/media';
 import Dropdown from '../Dropdown';
 import ProfileAvatar from '../ProfileAvatar';
@@ -18,6 +25,11 @@ import {
 const Nav: React.FC = () => {
     const userData = useContext(UserContext);
 
+    function handleLogout() {
+        Auth.destroyToken();
+        window.location.reload();
+    }
+
     return (
         <Container>
             <Content>
@@ -27,19 +39,25 @@ const Nav: React.FC = () => {
                 </LinkList>
                 <Dropdown
                     top='70px'
-                    width='150px'
+                    width='180px'
                     items={[
                         {
                             text: 'Meus horários',
+                            route: '/account/schedules',
+                            icon: <MdWatchLater size={20} />,
                         },
                         {
                             text: 'Fila - ao vivo',
+                            icon: <MdFiberManualRecord size={20} />,
                         },
                         {
                             text: 'Minha conta',
+                            icon: <MdAccountCircle size={20} />,
                         },
                         {
                             text: 'Sair',
+                            icon: <MdClose size={20} />,
+                            onClick: handleLogout,
                         },
                     ]}>
                     {userData ? (
