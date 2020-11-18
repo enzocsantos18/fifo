@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface IUser {
     _id: string;
-    firstName: string;
+    shortName: string;
     name: string;
     email: string;
     imageURL?: string;
