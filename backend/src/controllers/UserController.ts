@@ -22,9 +22,7 @@ class UserController {
                 .required('Name is required')
                 .min(5, 'Name must contain at least 8 caracthers')
                 .max(255, 'Name must contain maximum 255 caracthers'),
-            email: Yup.string()
-                .required('Email is required')
-                .email('Email is invalid'),
+            email: Yup.string().required('Email is required').email('Email is invalid'),
             password: Yup.string().required('Password is required').min(8),
         });
 
@@ -37,30 +35,32 @@ class UserController {
             err.inner.forEach(error => {
                 errors[error.path] = error.message;
             });
-            fs.unlinkSync(req.file.filename);
+            if (req.file) fs.unlinkSync(req.file.filename);
             return res.status(400).send(errors);
         }
 
         try {
             if (await User.findOne({ email })) {
-                fs.unlinkSync(req.file.filename);
+                if (req.file) fs.unlinkSync(req.file.filename);
                 return res.status(400).send({ error: 'User already exists' });
             }
 
-            await sharp(req.file.path, {
-                failOnError: false,
-            })
-                .resize(50)
-                .withMetadata()
-                .toFile(
-                    path.resolve(
-                        req.file.destination,
-                        'thumbnail-' + req.file.filename
-                    )
-                );
+            if (req.file) {
+                await sharp(req.file.path, {
+                    failOnError: false,
+                })
+                    .resize(50)
+                    .withMetadata()
+                    .toFile(
+                        path.resolve(
+                            req.file.destination,
+                            'thumbnail-' + req.file.filename
+                        )
+                    );
+            }
             const user = await User.create({
                 ...req.body,
-                imageURL: req.file.filename,
+                imageURL: req.file ? req.file.filename : null,
             });
 
             user.password = undefined;
@@ -71,13 +71,8 @@ class UserController {
         }
     }
 
-    public async changePassword(
-        req: Request,
-        res: Response
-    ): Promise<Response> {
-        const user = await User.findById(res.locals['user'].id).select(
-            '+password'
-        );
+    public async changePassword(req: Request, res: Response): Promise<Response> {
+        const user = await User.findById(res.locals['user'].id).select('+password');
 
         const schema = Yup.object().shape({
             password: Yup.string().required('A senha deve ser digitada'),
@@ -98,10 +93,7 @@ class UserController {
         }
 
         try {
-            if (!user)
-                return res
-                    .status(404)
-                    .send({ error: 'Usuário não localizado.' });
+            if (!user) return res.status(404).send({ error: 'Usuário não localizado.' });
 
             if (!bcrypt.compareSync(req.body.password, user.password))
                 return res.status(400).send({ error: 'Senha incorreta.' });
@@ -114,25 +106,17 @@ class UserController {
             let newPassword = await bcrypt.hash(req.body.newPassword, 10);
             await User.findByIdAndUpdate(user.id, { password: newPassword });
         } catch (err) {
-            console.log(err);
-            return res
-                .status(400)
-                .send({ error: 'Falha ao atualizar a senha.' });
+            return res.status(400).send({ error: 'Falha ao atualizar a senha.' });
         }
 
         res.status(200).send('Senha atualizada com sucesso!');
     }
 
-    public async forgotPassowrd(
-        req: Request,
-        res: Response
-    ): Promise<Response> {
+    public async forgotPassowrd(req: Request, res: Response): Promise<Response> {
         const { email } = req.body;
 
         const schema = Yup.object().shape({
-            email: Yup.string()
-                .required('Email is required')
-                .email('Email is invalid'),
+            email: Yup.string().required('Email is required').email('Email is invalid'),
         });
 
         try {
@@ -157,15 +141,10 @@ class UserController {
     }
 
     public async deleteUser(req: Request, res: Response): Promise<Response> {
-        const user = await User.findById(res.locals['user'].id).select(
-            '+password'
-        );
+        const user = await User.findById(res.locals['user'].id).select('+password');
 
         try {
-            if (!user)
-                return res
-                    .status(404)
-                    .send({ error: 'Usuário não localizado.' });
+            if (!user) return res.status(404).send({ error: 'Usuário não localizado.' });
 
             if (!bcrypt.compareSync(req.body.password, user.password))
                 return res.status(400).send({ error: 'Senha incorreta.' });
