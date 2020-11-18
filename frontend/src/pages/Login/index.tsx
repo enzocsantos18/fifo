@@ -5,17 +5,12 @@ import { Form } from '@unform/web';
 import API from '../../services/api';
 import Auth from '../../services/auth';
 import TextInput from '../../components/Input/Text';
-import {
-    MdArrowForward,
-    MdDrafts,
-    MdSentimentDissatisfied,
-} from 'react-icons/md';
+import { MdArrowForward, MdDrafts, MdSentimentDissatisfied } from 'react-icons/md';
 import Button from '../../components/Input/Button';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { StageSpinner } from 'react-spinners-kit';
 import Modal from '../../components/Modal';
-import { useHistory } from 'react-router-dom';
 
 interface IFormData {
     email: string;
@@ -27,7 +22,6 @@ const Login: React.FC = () => {
     const [error, setError] = useState('');
     const [isErrored, setErrored] = useState(false);
     const formRef = useRef<FormHandles>(null);
-    const history = useHistory();
 
     async function handleSubmit(data: IFormData) {
         const schema = Yup.object().shape({
@@ -86,7 +80,6 @@ const Login: React.FC = () => {
                             name='password'
                             type='password'
                             placeholder='Sua senha'
-                            icon={<MdDrafts size={20} />}
                         />
 
                         <a className='right'>Esqueci minha senha</a>
@@ -100,9 +93,7 @@ const Login: React.FC = () => {
                             )}
                         </Button>
                         <div className='center'>
-                            <a href='/register'>
-                                Não tem uma conta? crie uma agora
-                            </a>
+                            <a href='/register'>Não tem uma conta? crie uma agora</a>
                         </div>
                     </Form>
                 </Container>
