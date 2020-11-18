@@ -143,13 +143,13 @@ const MySchedules: React.FC = () => {
                                                     </span>
                                                 </ScheduleInfo>
                                                 <Dropdown
-                                                    width='120px'
+                                                    width='150px'
                                                     items={[
                                                         {
                                                             text: 'Cancelar',
-                                                            icon: (
-                                                                <MdRemoveCircleOutline />
-                                                            ),
+                                                            icon: 
+                                                                <MdRemoveCircleOutline size={20} />
+                                                            ,
                                                             onClick: () => {
                                                                 setDeletingSchedule(
                                                                     true
