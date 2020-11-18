@@ -12,9 +12,12 @@ function App() {
         if (Auth.hasToken()) {
             API.get('users')
                 .then(({ data }) => {
+                    const nameParts = data['name'].split(' ');
                     setUserData({
                         ...data,
-                        firstName: data['name'].split(' ')[0],
+                        firstName: `${
+                            nameParts[0]
+                        } ${(nameParts[1][0] as string).toUpperCase()}.`,
                     });
                 })
                 .catch(() => {
