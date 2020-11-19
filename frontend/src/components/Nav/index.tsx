@@ -52,6 +52,7 @@ const Nav: React.FC = () => {
                         },
                         {
                             text: 'Minha conta',
+                            route: '/account/settings',
                             icon: <MdAccountCircle size={20} />,
                         },
                         {
