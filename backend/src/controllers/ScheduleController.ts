@@ -12,6 +12,7 @@ class ScheduleController {
     const schedules = await Schedule.find({
       user,
     })
+      .sort({ date: "asc" })
       .select("-user")
       .populate("game")
       .populate("station");
@@ -28,6 +29,7 @@ class ScheduleController {
     const schedules = await Schedule.find({
       station,
     })
+      .sort({ date: "asc" })
       .populate("user")
       .populate("game");
 
@@ -64,10 +66,12 @@ class ScheduleController {
     try {
       const nextSchedule = await Schedule.findOne({
         date: { $gte: date },
+        station,
       }).select("date");
 
       const previousSchedule = await Schedule.findOne({
         date: { $lte: date },
+        station,
       }).select("date time");
 
       if (nextSchedule) {
@@ -92,7 +96,7 @@ class ScheduleController {
         }
       }
 
-      if (await Schedule.findOne({ date }))
+      if (await Schedule.findOne({ date, station }))
         return res.status(400).send({ error: "Schedule already exists" });
 
       const user = await User.findById(res.locals["user"].id);
