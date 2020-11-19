@@ -52,6 +52,7 @@ export const DeleteAccountText = styled.div`
         color: red;
         font-weight: 700;
     }
-    
+
     margin-bottom: 30px;
+    text-align: center;
 `;
