@@ -14,6 +14,7 @@ import Schedule from './pages/Schedule';
 import SelectGame from './pages/SelectGame';
 import SelectStation from './pages/SelectStation';
 import Auth from './services/auth';
+import MyAccount from './pages/MyAccount';
 
 const PrivateRoute: React.FC<RouteProps> = props => {
     if (!Auth.hasToken()) {
@@ -52,6 +53,7 @@ const Routes: React.FC = () => {
                 <PrivateRoute path='/schedule/station' component={SelectStation} />
                 <PrivateRoute path='/schedule/final' component={Schedule} />
                 <PrivateRoute path='/account/schedules' component={MySchedules} />
+                <PrivateRoute path='/account/settings' component={MyAccount} />
                 <PrivateRoute path='/' component={MySchedules} exact />
             </Switch>
         </BrowserRouter>
