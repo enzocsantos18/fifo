@@ -3,11 +3,18 @@ import { MdCameraAlt } from 'react-icons/md';
 import { Wrapper, Container, CameraButton } from './styles';
 import { useField } from '@unform/core';
 
-interface IProps {
-    name?: string;
+export interface IAvatarPickerChangeEvent {
+    image: File | null;
+    imageSrc: string;
 }
 
-const AvatarPicker: React.FC<IProps> = ({ name = 'image' }) => {
+interface IProps {
+    name?: string;
+    defaultValue?: string;
+    onChange?(event: IAvatarPickerChangeEvent): void;
+}
+
+const AvatarPicker: React.FC<IProps> = ({ name = 'image', defaultValue, onChange }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<File | null>(null);
     const [imageSrc, setImageSrc] = useState('');
@@ -25,8 +32,12 @@ const AvatarPicker: React.FC<IProps> = ({ name = 'image' }) => {
             return;
         }
 
-        setImageSrc(URL.createObjectURL(imageFile));
+        const imageObjectURL = URL.createObjectURL(imageFile);
+
+        setImageSrc(imageObjectURL);
         setImage(imageFile);
+
+        if (onChange) onChange({ image: imageFile, imageSrc: imageObjectURL });
     }
 
     function handleClick() {
@@ -42,6 +53,12 @@ const AvatarPicker: React.FC<IProps> = ({ name = 'image' }) => {
             },
         });
     }, [fieldName, registerField, image]);
+
+    useEffect(() => {
+        if (defaultValue) {
+            setImageSrc(defaultValue);
+        }
+    }, [defaultValue]);
 
     return (
         <Wrapper>
