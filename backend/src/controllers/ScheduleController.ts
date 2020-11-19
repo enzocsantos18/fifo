@@ -122,14 +122,24 @@ class ScheduleController {
     const user = await User.findById(res.locals["user"].id);
 
     try {
-      await Schedule.findOneAndDelete({
+      const schedule = await Schedule.findOne({
         user,
         _id: req.params.id,
-      });
+      }).populate("station");
 
-      return res.status(201).send("Schedule deleted.");
+      if (!schedule) {
+        return res.status(404).send({ error: "Agendamento não encontrado." });
+      }
+
+      await schedule.deleteOne();
+
+      const stationId = schedule.station._id.toString();
+
+      socket.to(stationId).emit("schedule-delete", { id: schedule._id });
+
+      return res.status(201).send("Agendamento excluído.");
     } catch (err) {
-      return res.status(400).send({ error: "Schedule not found." });
+      return res.status(400).send({ error: "Erro ao excluir o agendamento." });
     }
   }
 }
