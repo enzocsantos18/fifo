@@ -1,14 +1,16 @@
 import React from 'react';
 import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
 
-import { Wrapper, Container } from './styles';
+import { Wrapper, Container, Header } from './styles';
+import { MdClose } from 'react-icons/md';
 
 interface IProps {
     isVisible: boolean;
     width?: string;
+    onClose?(): void;
 }
 
-const Modal: React.FC<IProps> = ({ children, isVisible, width }) => {
+const Modal: React.FC<IProps> = ({ children, isVisible, width, onClose }) => {
     return (
         <AnimateSharedLayout type='crossfade'>
             <AnimatePresence>
@@ -22,6 +24,12 @@ const Modal: React.FC<IProps> = ({ children, isVisible, width }) => {
                             animate={{ opacity: 1, translateY: 0 }}
                             exit={{ opacity: 0, translateY: 200 }}
                             style={{ width: width ? width : '300px' }}>
+                            {onClose && (
+                                <Header>
+                                    <MdClose onClick={onClose} size={24} />
+                                </Header>
+                            )}
+
                             {children}
                         </Container>
                     </Wrapper>

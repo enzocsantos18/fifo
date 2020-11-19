@@ -19,7 +19,33 @@ export const Container = styled(motion.div)`
     background: #fff;
     border-radius: 16px;
     padding: 30px 40px;
-    text-align: center;
+
+    & svg {
+        margin: auto;
+        width: 100%;
+    }
+
+    & h1,
+    & h2,
+    & h3 {
+        text-align: center;
+    }
+`;
+
+export const Header = styled.div`
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+
+    & svg {
+        margin: 0;
+        width: 24px;
+        cursor: pointer;
+    }
+
+    & svg:hover {
+        color: var(--text1);
+    }
 `;
 
 export const ModalActions = styled.div`
