@@ -4,6 +4,7 @@ import Station from "../models/Station";
 import User from "../models/User";
 import * as Yup from "yup";
 import moment from "moment";
+import { socket } from "../app";
 
 class ScheduleController {
   public async index(req: Request, res: Response): Promise<Response> {
@@ -108,6 +109,8 @@ class ScheduleController {
         user,
         time,
       });
+
+      socket.to(station).emit("schedule-create", { schedule });
 
       return res.json(schedule);
     } catch (err) {
