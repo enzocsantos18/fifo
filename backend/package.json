@@ -44,6 +44,7 @@
     "scripts": {
         "start": "sucrase-node src/app.ts",
         "dev": "nodemon --exec sucrase-node src/app.ts",
-        "test": "set NODE_ENV=test&& mocha -r sucrase/register tests/**/*.spec.ts"
+        "test": "set NODE_ENV=test&& mocha -r sucrase/register tests/**/*.spec.ts",
+        "test-linux": "export NODE_ENV=test&& mocha -r sucrase/register tests/**/*.spec.ts"
     }
 }
