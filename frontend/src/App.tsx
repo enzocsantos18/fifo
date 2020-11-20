@@ -4,6 +4,7 @@ import GlobalStyle from './styles/GlobalStyle';
 import Auth from './services/auth';
 import API from './services/api';
 import { IUser, UserContext } from './contexts/User';
+import { shortName } from './util';
 
 function App() {
     const [userData, setUserData] = useState<IUser | null>(null);
@@ -12,18 +13,9 @@ function App() {
         if (Auth.hasToken()) {
             API.get('users')
                 .then(({ data }) => {
-                    const nameParts = data['name'].split(' ');
-
-                    const shortName =
-                        nameParts.length > 1
-                            ? `${
-                                  nameParts[0]
-                              } ${(nameParts[1][0] as string).toUpperCase()}.`
-                            : nameParts[0];
-                            
                     setUserData({
                         ...data,
-                        shortName,
+                        shortName: shortName(data['name']),
                     });
                 })
                 .catch(() => {
