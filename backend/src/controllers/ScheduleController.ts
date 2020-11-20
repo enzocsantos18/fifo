@@ -1,147 +1,162 @@
-import { Request, Response } from "express";
-import Schedule from "../models/Schedule";
-import Station from "../models/Station";
-import User from "../models/User";
-import * as Yup from "yup";
-import moment from "moment";
-import { socket } from "../app";
+import { Request, Response } from 'express';
+import Schedule from '../models/Schedule';
+import Station from '../models/Station';
+import User from '../models/User';
+import * as Yup from 'yup';
+import moment from 'moment';
+import { socket } from '../app';
 
 class ScheduleController {
-  public async index(req: Request, res: Response): Promise<Response> {
-    const user = await User.findById(res.locals["user"].id);
+    public async index(req: Request, res: Response): Promise<Response> {
+        const user = await User.findById(res.locals['user'].id);
 
-    const schedules = await Schedule.find({
-      user,
-    })
-      .sort({ date: "asc" })
-      .select("-user")
-      .populate("game")
-      .populate("station");
+        const schedules = await Schedule.find({
+            user,
+        })
+            .sort({ date: 'asc' })
+            .select('-user')
+            .populate('game')
+            .populate('station');
 
-    return res.json(schedules);
-  }
-
-  public async indexByStation(req: Request, res: Response): Promise<Response> {
-    const station = await Station.findById(req.params.id);
-
-    if (!station)
-      return res.status(404).send({ error: "Estação não encontrada" });
-
-    const schedules = await Schedule.find({
-      station,
-    })
-      .sort({ date: "asc" })
-      .populate("user")
-      .populate("game");
-
-    return res.json(schedules);
-  }
-
-  public async create(req: Request, res: Response): Promise<Response> {
-    const schema = Yup.object().shape({
-      date: Yup.date().required("Date is required"),
-      station: Yup.string().required("Station is required"),
-      game: Yup.string().required("Game is required"),
-      time: Yup.number()
-        .positive("The time needs to be positive")
-        .oneOf(
-          [15, 30, 45, 60],
-          "The time needs to be 15, 30, 45 or 60 minutes"
-        ),
-    });
-
-    try {
-      await schema.validate(req.body, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      const errors = {};
-      err.inner.forEach((error) => {
-        errors[error.path] = error.message;
-      });
-      return res.status(400).send(errors);
+        return res.json(schedules);
     }
 
-    const { date, station, game, time } = req.body;
+    public async indexByStation(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
+        const station = await Station.findById(req.params.id);
 
-    try {
-      const nextSchedule = await Schedule.findOne({
-        date: { $gte: date },
-        station,
-      }).select("date");
+        if (!station)
+            return res.status(404).send({ error: 'Estação não encontrada' });
 
-      const previousSchedule = await Schedule.findOne({
-        date: { $lte: date },
-        station,
-      }).select("date time");
+        const schedules = await Schedule.find({
+            station,
+        })
+            .sort({ date: 'asc' })
+            .populate('user')
+            .populate('game');
 
-      if (nextSchedule) {
-        const currentDate = moment(date);
-        const nextDate = moment(nextSchedule.date);
+        return res.json(schedules);
+    }
 
-        currentDate.add(time, "minutes");
+    public async create(req: Request, res: Response): Promise<Response> {
+        const schema = Yup.object().shape({
+            date: Yup.date().required('Data deve ser inserida'),
+            station: Yup.string().required('Estação deve ser selecionada'),
+            game: Yup.string().required('Jogo deve ser selecionado'),
+            time: Yup.number()
+                .positive('O tempo precisa ser positivo')
+                .oneOf(
+                    [15, 30, 45, 60],
+                    'O tempo precisa ser 15, 30, 45 ou 60 minutos'
+                ),
+        });
 
-        if (currentDate > nextDate) {
-          return res.status(400).send({ error: "Invalid schedule time" });
+        try {
+            await schema.validate(req.body, {
+                abortEarly: false,
+            });
+        } catch (err) {
+            const errors = {};
+            err.inner.forEach(error => {
+                errors[error.path] = error.message;
+            });
+            return res.status(400).send(errors);
         }
-      }
 
-      if (previousSchedule) {
-        const currentDate = moment(date);
-        const previousDate = moment(previousSchedule.date);
+        const { date, station, game, time } = req.body;
 
-        previousDate.add(Number(previousSchedule.time), "minutes");
+        try {
+            const nextSchedule = await Schedule.findOne({
+                date: { $gte: date },
+                station,
+            }).select('date');
 
-        if (previousDate > currentDate) {
-          return res.status(400).send({ error: "Invalid schedule time" });
+            const previousSchedule = await Schedule.findOne({
+                date: { $lte: date },
+                station,
+            }).select('date time');
+
+            if (nextSchedule) {
+                const currentDate = moment(date);
+                const nextDate = moment(nextSchedule.date);
+
+                currentDate.add(time, 'minutes');
+
+                if (currentDate > nextDate) {
+                    return res
+                        .status(400)
+                        .send({
+                            error: 'Agendamento inválido, horário indisponível',
+                        });
+                }
+            }
+
+            if (previousSchedule) {
+                const currentDate = moment(date);
+                const previousDate = moment(previousSchedule.date);
+
+                previousDate.add(Number(previousSchedule.time), 'minutes');
+
+                if (previousDate > currentDate) {
+                    return res
+                        .status(400)
+                        .send({
+                            error: 'Agendamento inválido, horário indisponível',
+                        });
+                }
+            }
+
+            if (await Schedule.findOne({ date, station }))
+                return res.status(400).send({ error: 'Agendamento já existe' });
+
+            const user = await User.findById(res.locals['user'].id);
+
+            const schedule = await Schedule.create({
+                date,
+                station,
+                game,
+                user,
+                time,
+            });
+
+            socket.to(station).emit('schedule-create', { schedule });
+
+            return res.json(schedule);
+        } catch (err) {
+            return res.status(400).send({ error: 'Falha no agendamento' });
         }
-      }
-
-      if (await Schedule.findOne({ date, station }))
-        return res.status(400).send({ error: "Schedule already exists" });
-
-      const user = await User.findById(res.locals["user"].id);
-
-      const schedule = await Schedule.create({
-        date,
-        station,
-        game,
-        user,
-        time,
-      });
-
-      socket.to(station).emit("schedule-create", { schedule });
-
-      return res.json(schedule);
-    } catch (err) {
-      return res.status(400).send({ error: "Schedule failed" });
     }
-  }
 
-  public async delete(req: Request, res: Response): Promise<Response> {
-    const user = await User.findById(res.locals["user"].id);
+    public async delete(req: Request, res: Response): Promise<Response> {
+        const user = await User.findById(res.locals['user'].id);
 
-    try {
-      const schedule = await Schedule.findOne({
-        user,
-        _id: req.params.id,
-      }).populate("station");
+        try {
+            const schedule = await Schedule.findOne({
+                user,
+                _id: req.params.id,
+            }).populate('station');
 
-      if (!schedule) {
-        return res.status(404).send({ error: "Agendamento não encontrado." });
-      }
+            if (!schedule) {
+                return res
+                    .status(404)
+                    .send({ error: 'Agendamento não encontrado' });
+            }
 
-      await schedule.deleteOne();
+            await schedule.deleteOne();
 
-      const stationId = schedule.station._id.toString();
+            const stationId = schedule.station._id.toString();
 
-      socket.to(stationId).emit("schedule-delete", { id: schedule._id });
+            socket.to(stationId).emit('schedule-delete', { id: schedule._id });
 
-      return res.status(201).send("Agendamento excluído.");
-    } catch (err) {
-      return res.status(400).send({ error: "Erro ao excluir o agendamento." });
+            return res.status(201).send('Agendamento excluído.');
+        } catch (err) {
+            return res
+                .status(400)
+                .send({ error: 'Erro ao excluir o agendamento.' });
+        }
     }
-  }
 }
 
 export default new ScheduleController();

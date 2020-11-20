@@ -33,14 +33,14 @@ class AuthController {
                 );
 
                 user.password = undefined;
-                
+
                 return res.json({
                     token,
                     user,
                 });
             }
 
-            return res.status(401).json({ error: "Password doesn't match" });
+            return res.status(401).json({ error: 'Senha não coincide' });
         });
     }
 

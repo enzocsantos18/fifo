@@ -17,13 +17,15 @@ class StationController {
 
             return res.json(stations);
         } catch (err) {
-            return res.status(400).send('No stations linked to that game');
+            return res
+                .status(400)
+                .send('Nenhuma estação vinculada a esse jogo');
         }
     }
 
     public async create(req: Request, res: Response): Promise<Response> {
         const schema = Yup.object().shape({
-            name: Yup.string().required('Name is required'),
+            name: Yup.string().required('Nome da estação deve ser digitado'),
         });
 
         try {

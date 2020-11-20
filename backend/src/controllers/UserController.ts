@@ -19,11 +19,13 @@ class UserController {
 
         const schema = Yup.object().shape({
             name: Yup.string()
-                .required('Name is required')
-                .min(5, 'Name must contain at least 8 caracthers')
-                .max(255, 'Name must contain maximum 255 caracthers'),
-            email: Yup.string().required('Email is required').email('Email is invalid'),
-            password: Yup.string().required('Password is required').min(8),
+                .required('Nome deve ser digitado')
+                .min(5, 'Nome deve conter pelo menos 8 caracteres')
+                .max(255, 'Nome deve conter no máximo 255 carateres'),
+            email: Yup.string()
+                .required('Email deve ser digiatdo')
+                .email('Tipo de email inválido'),
+            password: Yup.string().required('Senha deve ser digitada').min(8),
         });
 
         try {
@@ -42,7 +44,7 @@ class UserController {
         try {
             if (await User.findOne({ email })) {
                 if (req.file) fs.unlinkSync(req.file.filename);
-                return res.status(400).send({ error: 'User already exists' });
+                return res.status(400).send({ error: 'Usuário já existe' });
             }
 
             if (req.file) {
@@ -67,17 +69,24 @@ class UserController {
 
             return res.send({ user });
         } catch (err) {
-            return res.status(400).send({ error: 'Registration failed' });
+            return res.status(400).send({ error: 'Falha no registro' });
         }
     }
 
-    public async changePassword(req: Request, res: Response): Promise<Response> {
-        const user = await User.findById(res.locals['user'].id).select('+password');
+    public async changePassword(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
+        const user = await User.findById(res.locals['user'].id).select(
+            '+password'
+        );
 
         const schema = Yup.object().shape({
-            password: Yup.string().required('A senha deve ser digitada'),
-            newPassword: Yup.string().required('A senha deve ser digitada'),
-            confirmPassword: Yup.string().required('A senha deve ser digitada'),
+            password: Yup.string().required('Senha atual deve ser digitada'),
+            newPassword: Yup.string().required('Nova senha deve ser digitada'),
+            confirmPassword: Yup.string().required(
+                'Nova senha deve ser repetida'
+            ),
         });
 
         try {
@@ -93,7 +102,10 @@ class UserController {
         }
 
         try {
-            if (!user) return res.status(404).send({ error: 'Usuário não localizado.' });
+            if (!user)
+                return res
+                    .status(404)
+                    .send({ error: 'Usuário não localizado.' });
 
             if (!bcrypt.compareSync(req.body.password, user.password))
                 return res.status(400).send({ error: 'Senha incorreta.' });
@@ -106,17 +118,24 @@ class UserController {
             let newPassword = await bcrypt.hash(req.body.newPassword, 10);
             await User.findByIdAndUpdate(user.id, { password: newPassword });
         } catch (err) {
-            return res.status(400).send({ error: 'Falha ao atualizar a senha.' });
+            return res
+                .status(400)
+                .send({ error: 'Falha ao atualizar a senha.' });
         }
 
         res.status(200).send('Senha atualizada com sucesso!');
     }
 
-    public async forgotPassword(req: Request, res: Response): Promise<Response> {
+    public async forgotPassword(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
         const { email } = req.body;
 
         const schema = Yup.object().shape({
-            email: Yup.string().required('Email is required').email('Email is invalid'),
+            email: Yup.string()
+                .required('Email deve ser digitado')
+                .email('Tipo de email inválido'),
         });
 
         try {
@@ -136,15 +155,20 @@ class UserController {
                 return res.status(201).json({ token: uuid() });
             }
         } catch (err) {
-            return res.status(400).send({ error: 'E-mail inválido.' });
+            return res.status(400).send({ error: 'Email inválido.' });
         }
     }
 
     public async deleteUser(req: Request, res: Response): Promise<Response> {
-        const user = await User.findById(res.locals['user'].id).select('+password');
+        const user = await User.findById(res.locals['user'].id).select(
+            '+password'
+        );
 
         try {
-            if (!user) return res.status(404).send({ error: 'Usuário não localizado.' });
+            if (!user)
+                return res
+                    .status(404)
+                    .send({ error: 'Usuário não localizado.' });
 
             if (!bcrypt.compareSync(req.body.password, user.password))
                 return res.status(400).send({ error: 'Senha incorreta.' });
@@ -157,11 +181,14 @@ class UserController {
         }
     }
 
-    public async update(req: Request, res: Response):Promise<Response> {
+    public async update(req: Request, res: Response): Promise<Response> {
         const user = await User.findById(res.locals['user'].id);
 
         try {
-            if (!user) return res.status(404).send({ error: 'Usuário não localizado.' });
+            if (!user)
+                return res
+                    .status(404)
+                    .send({ error: 'Usuário não localizado.' });
 
             if (req.file) {
                 await sharp(req.file.path, {
@@ -179,9 +206,8 @@ class UserController {
             await User.findByIdAndUpdate(user.id, {
                 imageURL: req.file ? req.file.filename : null,
             });
-            
-        } catch(err) {
-            return res.status(400).send({ error: 'Imagem não atualizada' })
+        } catch (err) {
+            return res.status(400).send({ error: 'Imagem não atualizada' });
         }
 
         return;

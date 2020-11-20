@@ -17,8 +17,8 @@ class GameController {
 
     public async create(req: Request, res: Response): Promise<Response> {
         const schema = Yup.object().shape({
-            name: Yup.string().required('Name is required'),
-            stations: Yup.array().required('Stations is required'),
+            name: Yup.string().required('Nome do jogo deve ser digitado'),
+            stations: Yup.array().required('Estação deve ser selecionada'),
         });
 
         try {
@@ -47,7 +47,7 @@ class GameController {
                     fs.unlinkSync(req.file.path);
                     return res
                         .status(400)
-                        .send({ station: 'Invalid station id format' });
+                        .send({ station: 'Formato inválido de id da estação' });
                 }
 
                 if (await Station.exists({ _id: stationId })) {
@@ -59,7 +59,9 @@ class GameController {
                     });
                 } else {
                     fs.unlinkSync(req.file.path);
-                    return res.status(400).send({ station: 'Unknown station' });
+                    return res
+                        .status(400)
+                        .send({ station: 'Estação desconhecida' });
                 }
             });
 
@@ -67,7 +69,7 @@ class GameController {
         } catch (err) {
             console.log(err);
             fs.unlinkSync(req.file.path);
-            return res.status(400).send({ game: 'Invalid game' });
+            return res.status(400).send({ game: 'Jogo inválido' });
         }
     }
 }
