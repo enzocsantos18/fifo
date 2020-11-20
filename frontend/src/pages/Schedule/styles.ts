@@ -2,11 +2,10 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 export const Wrapper = styled.div`
-    width: 100vw;
-    height: 100vh;
     display: flex;
+    width: 100%;
     justify-content: center;
-    align-items: center;
+    margin-top: 200px;
 `;
 
 export const Container = styled(motion.div)`
@@ -22,6 +21,11 @@ export const Container = styled(motion.div)`
             margin-top: 20px;
         }
     }
+`;
+
+export const RightContainer = styled(Container)`
+    width: 400px;
+    margin-left: 20px;
 `;
 
 export const Actions = styled.div`

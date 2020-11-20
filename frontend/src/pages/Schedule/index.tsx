@@ -13,12 +13,18 @@ import Input from '../../components/Input';
 import Button from '../../components/Input/Button';
 import { RangeInput, RangeLabels } from '../../components/Input/Range/indes';
 import TimePicker, { ITime } from '../../components/TimePicker';
-import { Container, Wrapper, Actions } from './styles';
+import { Container, Wrapper, Actions, RightContainer } from './styles';
 import * as Yup from 'yup';
 import { StageSpinner } from 'react-spinners-kit';
 import API from '../../services/api';
 import Modal from '../../components/Modal';
 import { AxiosError } from 'axios';
+import socket, { IScheduleCreateMessage } from '../../services/socket';
+import ScheduleItem, { ISchedule } from '../../components/ScheduleItem';
+import { IScheduleDeleteMessage } from './../../services/socket';
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
+import moment from 'moment';
+import { shortName } from '../../util';
 
 interface ILocationState {
     game?: string;
@@ -40,6 +46,7 @@ const Schedule: React.FC = () => {
     const [responseErrors, setResponseErrors] = useState<{
         [path: string]: string;
     }>({});
+    const [schedules, setSchedules] = useState<ISchedule[]>([]);
 
     async function handleSubmit(data: IFormData) {
         setLoading(true);
@@ -98,13 +105,75 @@ const Schedule: React.FC = () => {
         return response;
     }
 
+    async function loadSchedules() {
+        const { station } = location.state;
+
+        let { data: schedules } = await API.get<ISchedule[]>(
+            `schedules/${station}`
+        );
+
+        schedules = schedules.map(schedule => {
+            const scheduleDate = moment(schedule.date);
+
+            return {
+                ...schedule,
+                horary: scheduleDate.format('HH:mm'),
+                user: {
+                    ...schedule.user,
+                    shortName: shortName(schedule.user.name),
+                },
+            };
+        });
+
+        setSchedules(schedules);
+    }
+
+    function addSchedule(schedule: ISchedule) {
+        setSchedules(currentSchedules => {
+            currentSchedules.sort(
+                (a, b) =>
+                    new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+            return [...currentSchedules, schedule];
+        });
+    }
+
+    function removeSchedule(id: string) {
+        setSchedules(currentSchedules =>
+            currentSchedules.filter(schedule => schedule._id !== id)
+        );
+    }
+
+    function setupServer() {
+        const { station } = location.state;
+
+        socket.emit('subscribe', { room: station });
+
+        socket.on('schedule-create', (data: IScheduleCreateMessage) => {
+            addSchedule(data.schedule);
+        });
+
+        socket.on('schedule-delete', (data: IScheduleDeleteMessage) => {
+            removeSchedule(data.id);
+        });
+    }
+
+    function unsetupServer() {
+        socket.off('schedule-create');
+        socket.off('schedule-delete');
+    }
+
     useEffect(() => {
         if (!location.state) {
             history.push('/schedule/game');
 
             return;
         }
-    });
+        loadSchedules();
+        setupServer();
+
+        return () => unsetupServer();
+    }, []);
 
     return (
         <>
@@ -165,6 +234,22 @@ const Schedule: React.FC = () => {
                         </Actions>
                     </Form>
                 </Container>
+                <RightContainer>
+                    <h1>Horários marcados</h1>
+                    <AnimateSharedLayout>
+                        <motion.div layout>
+                            <AnimatePresence>
+                                {schedules.map(schedule => (
+                                    <ScheduleItem
+                                        key={schedule._id}
+                                        variant='user'
+                                        schedule={schedule}
+                                    />
+                                ))}
+                            </AnimatePresence>
+                        </motion.div>
+                    </AnimateSharedLayout>
+                </RightContainer>
             </Wrapper>
             <Modal isVisible={isSubmited}>
                 <MdSentimentSatisfied size={70} />
