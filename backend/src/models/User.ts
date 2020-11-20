@@ -5,7 +5,7 @@ export interface IUser extends mongoose.Document {
     name: string;
     email: string;
     password: string;
-    isAdmin: boolean;
+    isAdmin?: boolean;
 }
 
 const UserSchema = new mongoose.Schema({
@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
-        required: true,
+        required: false,
         default: false,
     }
 });
