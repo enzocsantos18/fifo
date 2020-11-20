@@ -32,6 +32,23 @@ export const Container = styled(motion.div)`
     }
 `;
 
+export const ShimmerContainer = styled.div`
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #efefef;
+
+    & span {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+`;
+
 export const ScheduleTime = styled.div`
     display: flex;
     justify-content: center;
@@ -70,7 +87,7 @@ export const ScheduleInfo = styled.div`
 export const ScheduleUserInfo = styled.div`
     display: flex;
     align-items: center;
-    
+
     & span {
         color: #fff;
         font-weight: 500;

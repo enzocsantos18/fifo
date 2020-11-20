@@ -6,13 +6,15 @@ import {
     ScheduleJoint,
     ScheduleDetails,
     ScheduleInfo,
-    ScheduleUserInfo
+    ScheduleUserInfo,
+    ShimmerContainer,
 } from './styles';
 
 import Dropdown from '../Dropdown';
 import { MdRemoveCircleOutline, MdMoreVert } from 'react-icons/md';
 import ProfileAvatar from '../ProfileAvatar';
 import { media } from '../../services/media';
+import { CircleShimmer, LineShimmer } from '../Shimmer';
 
 type Type = 'user' | 'game';
 
@@ -51,7 +53,7 @@ interface IProps {
     showSettings?: boolean;
 }
 
-const Schedule: React.FC<IProps> = ({
+const ScheduleItem: React.FC<IProps> = ({
     variant,
     schedule,
     onDelete,
@@ -134,4 +136,27 @@ const Schedule: React.FC<IProps> = ({
     );
 };
 
-export default Schedule;
+export const ScheduleItemShimmer: React.FC = () => {
+    return (
+        <ShimmerContainer>
+            <span>
+                <LineShimmer width='46px' height='23px' />
+                <CircleShimmer
+                    width='16px'
+                    height='16px'
+                    style={{ marginLeft: 20 }}
+                />
+            </span>
+            <span>
+                <LineShimmer width='75px' height='23px' />
+                <CircleShimmer
+                    width='40px'
+                    height='40px'
+                    style={{ marginLeft: 10 }}
+                />
+            </span>
+        </ShimmerContainer>
+    );
+};
+
+export default ScheduleItem;
