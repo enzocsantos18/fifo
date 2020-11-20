@@ -40,6 +40,41 @@ class ScheduleController {
         return res.json(schedules);
     }
 
+    public async indexByStationAndDay(
+        req: Request,
+        res: Response
+    ): Promise<Response> {
+        const station = await Station.findById(req.params.id);
+
+        if (!station)
+            return res.status(404).send({ error: 'Estação não encontrada' });
+
+        const { day } = req.body;
+
+        if (!day) {
+            return res
+                .status(400)
+                .send({ error: 'O dia deve ser especificado' });
+        }
+
+        const currentDate = moment().startOf('day');
+
+        currentDate.set('date', day);
+
+        const schedules = await Schedule.find({
+            station,
+            date: {
+                $gte: currentDate.toDate(),
+                $lte: currentDate.endOf('day').toDate(),
+            },
+        })
+            .sort({ date: 'asc' })
+            .populate('user')
+            .populate('game');
+
+        return res.json(schedules);
+    }
+
     public async create(req: Request, res: Response): Promise<Response> {
         const schema = Yup.object().shape({
             date: Yup.date().required('Data deve ser inserida'),
@@ -85,11 +120,9 @@ class ScheduleController {
                 currentDate.add(time, 'minutes');
 
                 if (currentDate > nextDate) {
-                    return res
-                        .status(400)
-                        .send({
-                            error: 'Agendamento inválido, horário indisponível',
-                        });
+                    return res.status(400).send({
+                        error: 'Agendamento inválido, horário indisponível',
+                    });
                 }
             }
 
@@ -100,11 +133,9 @@ class ScheduleController {
                 previousDate.add(Number(previousSchedule.time), 'minutes');
 
                 if (previousDate > currentDate) {
-                    return res
-                        .status(400)
-                        .send({
-                            error: 'Agendamento inválido, horário indisponível',
-                        });
+                    return res.status(400).send({
+                        error: 'Agendamento inválido, horário indisponível',
+                    });
                 }
             }
 
@@ -146,9 +177,9 @@ class ScheduleController {
 
             await schedule.deleteOne();
 
-            const stationId = schedule.station._id.toString();
-
-            socket.to(stationId).emit('schedule-delete', { id: schedule._id });
+            socket
+                .to(schedule.station._id.toString())
+                .emit('schedule-delete', { id: schedule._id });
 
             return res.status(201).send('Agendamento excluído.');
         } catch (err) {

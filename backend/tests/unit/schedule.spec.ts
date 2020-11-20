@@ -144,4 +144,18 @@ describe('Agendamento', () => {
 
         expect(data).to.have.length.gte(0);
     });
+
+    it('Usuário pode ver os agendamentos realizados por estação e por dia', async () => {
+        const date = moment().date();
+
+        const response = await request(server)
+            .post(`/schedules/${defaultStation._id}`)
+            .send({
+                day: date,
+            });
+
+        const data = JSON.parse(response.text);
+
+        expect(data).to.have.length.gte(0);
+    });
 });
