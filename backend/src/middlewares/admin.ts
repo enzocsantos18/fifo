@@ -9,7 +9,7 @@ export default async function AdminMiddlewares(
   const user = await User.findById(res.locals["user"].id);
 
   if (!user.isAdmin) {
-    res.status(403).send({ error: "Somente usário administrador" });
+    res.status(403).send({ error: "Somente usuário administrador" });
   }
 
   next();

@@ -112,7 +112,7 @@ class UserController {
         res.status(200).send('Senha atualizada com sucesso!');
     }
 
-    public async forgotPassowrd(req: Request, res: Response): Promise<Response> {
+    public async forgotPassword(req: Request, res: Response): Promise<Response> {
         const { email } = req.body;
 
         const schema = Yup.object().shape({

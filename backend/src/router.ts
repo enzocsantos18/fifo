@@ -16,7 +16,7 @@ router.post(
   [UserAvatarStorage.single("image")],
   UserController.create
 );
-router.post("/users/forgotpassword", UserController.forgotPassowrd);
+router.post("/users/forgotpassword", UserController.forgotPassword);
 router.post(
   "/users/changepassword",
   AuthMiddleware,
