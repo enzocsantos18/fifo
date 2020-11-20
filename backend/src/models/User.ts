@@ -5,6 +5,7 @@ export interface IUser extends mongoose.Document {
     name: string;
     email: string;
     password: string;
+    isAdmin: boolean;
 }
 
 const UserSchema = new mongoose.Schema({
@@ -25,6 +26,11 @@ const UserSchema = new mongoose.Schema({
     imageURL: {
         type: String,
     },
+    isAdmin: {
+        type: Boolean,
+        required: true,
+        default: false,
+    }
 });
 
 UserSchema.pre('save', async function (this: IUser, next) {
