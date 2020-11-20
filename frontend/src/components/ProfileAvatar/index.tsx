@@ -4,9 +4,10 @@ import { Container } from './styles';
 interface IProps {
     imageURL?: string;
     username: string;
+    size?: number;
 }
 
-const ProfileAvatar: React.FC<IProps> = ({ imageURL, username }) => {
+const ProfileAvatar: React.FC<IProps> = ({ imageURL, username, size = 50 }) => {
     const usernameParts = username?.split(' ');
     let shortUsername = '';
 
@@ -22,7 +23,11 @@ const ProfileAvatar: React.FC<IProps> = ({ imageURL, username }) => {
         shortUsername = `${getFirstLetterToUpper(usernameParts[0])}`;
     }
 
-    return <Container>{imageURL ? <img src={imageURL} /> : <p>{shortUsername}</p>}</Container>;
+    return (
+        <Container style={{ width: size, height: size }}>
+            {imageURL ? <img src={imageURL} /> : <p>{shortUsername}</p>}
+        </Container>
+    );
 };
 
 export default ProfileAvatar;
