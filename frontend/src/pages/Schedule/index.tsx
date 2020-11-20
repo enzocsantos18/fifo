@@ -13,14 +13,22 @@ import Input from '../../components/Input';
 import Button from '../../components/Input/Button';
 import { RangeInput, RangeLabels } from '../../components/Input/Range/indes';
 import TimePicker, { ITime } from '../../components/TimePicker';
-import { Container, Wrapper, Actions, RightContainer } from './styles';
+import {
+    Container,
+    Wrapper,
+    Actions,
+    RightContainer,
+    LoadingContainer,
+} from './styles';
 import * as Yup from 'yup';
 import { StageSpinner } from 'react-spinners-kit';
 import API from '../../services/api';
 import Modal from '../../components/Modal';
 import { AxiosError } from 'axios';
 import socket, { IScheduleCreateMessage } from '../../services/socket';
-import ScheduleItem, { ISchedule } from '../../components/ScheduleItem';
+import ScheduleItem, {
+    ISchedule,
+} from '../../components/ScheduleItem';
 import { IScheduleDeleteMessage } from './../../services/socket';
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
 import moment from 'moment';
@@ -124,7 +132,7 @@ const Schedule: React.FC = () => {
                 },
             };
         });
-
+       
         setSchedules(schedules);
     }
 
@@ -236,19 +244,26 @@ const Schedule: React.FC = () => {
                 </Container>
                 <RightContainer>
                     <h1>Horários marcados</h1>
-                    <AnimateSharedLayout>
-                        <motion.div layout>
-                            <AnimatePresence>
-                                {schedules.map(schedule => (
-                                    <ScheduleItem
-                                        key={schedule._id}
-                                        variant='user'
-                                        schedule={schedule}
-                                    />
-                                ))}
-                            </AnimatePresence>
-                        </motion.div>
-                    </AnimateSharedLayout>
+
+                    {schedules.length > 0 ? (
+                        <AnimateSharedLayout>
+                            <motion.div layout>
+                                <AnimatePresence>
+                                    {schedules.map(schedule => (
+                                        <ScheduleItem
+                                            key={schedule._id}
+                                            variant='user'
+                                            schedule={schedule}
+                                        />
+                                    ))}
+                                </AnimatePresence>
+                            </motion.div>
+                        </AnimateSharedLayout>
+                    ) : (
+                        <LoadingContainer>
+                            <StageSpinner color='#626770' size={70} />
+                        </LoadingContainer>
+                    )}
                 </RightContainer>
             </Wrapper>
             <Modal isVisible={isSubmited}>

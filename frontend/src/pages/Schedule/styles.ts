@@ -26,6 +26,15 @@ export const Container = styled(motion.div)`
 export const RightContainer = styled(Container)`
     width: 400px;
     margin-left: 20px;
+    overflow-y: auto;
+`;
+
+export const LoadingContainer = styled.div`
+    width: 100%;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 export const Actions = styled.div`
