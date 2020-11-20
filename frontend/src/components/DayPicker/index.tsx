@@ -12,9 +12,10 @@ export interface IDay {
 
 interface IProps {
     name?: string;
+    onChange?(day: IDay | undefined): void;
 }
 
-const DayPicker: React.FC<IProps> = ({ name = 'daypicker' }) => {
+const DayPicker: React.FC<IProps> = ({ name = 'daypicker', onChange }) => {
     const [selected, setSelected] = useState<IDay | undefined>(undefined);
     const [currentDays, setCurrentDays] = useState<IDay[]>([]);
 
@@ -43,6 +44,7 @@ const DayPicker: React.FC<IProps> = ({ name = 'daypicker' }) => {
         }
 
         setCurrentDays(days);
+        setSelected(days[0]);
     }
 
     function handleSelect(day: number) {
@@ -56,6 +58,8 @@ const DayPicker: React.FC<IProps> = ({ name = 'daypicker' }) => {
 
         setSelected(selectedDay);
         clearError();
+
+        onChange && onChange(selectedDay);
     }
 
     useEffect(loadDays, []);
