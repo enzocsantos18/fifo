@@ -156,6 +156,36 @@ class UserController {
             return res.status(400).send({ error: 'Falha ao apagar usuário.' });
         }
     }
+
+    public async update(req: Request, res: Response):Promise<Response> {
+        const user = await User.findById(res.locals['user'].id);
+
+        try {
+            if (!user) return res.status(404).send({ error: 'Usuário não localizado.' });
+
+            if (req.file) {
+                await sharp(req.file.path, {
+                    failOnError: false,
+                })
+                    .resize(50)
+                    .withMetadata()
+                    .toFile(
+                        path.resolve(
+                            req.file.destination,
+                            'thumbnail-' + req.file.filename
+                        )
+                    );
+            }
+            await User.findByIdAndUpdate(user.id, {
+                imageURL: req.file ? req.file.filename : null,
+            });
+            
+        } catch(err) {
+            return res.status(400).send({ error: 'Imagem não atualizada' })
+        }
+
+        return;
+    }
 }
 
 export default new UserController();
