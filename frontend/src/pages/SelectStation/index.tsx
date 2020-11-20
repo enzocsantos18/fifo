@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Wrapper, Container, StationList, Station, Actions, StationShimmerContainer } from './styles';
-import { MdMemory, MdArrowBack } from 'react-icons/md';
+import {
+    Wrapper,
+    Container,
+    StationList,
+    Station,
+    Actions,
+    StationShimmerContainer,
+} from './styles';
+import { MdPlayArrow, MdArrowBack } from 'react-icons/md';
 import { useHistory, useLocation } from 'react-router-dom';
 import Button from '../../components/Input/Button';
 import API from '../../services/api';
@@ -40,9 +47,7 @@ const SelectStation: React.FC = () => {
         }
 
         API.get(`games/${location.state.game}/stations`).then(({ data }) => {
-            setTimeout(() => {
-                setGameStations(data);
-            }, 200);
+            setGameStations(data);
         });
     }, []);
 
@@ -53,8 +58,8 @@ const SelectStation: React.FC = () => {
                 <StationList>
                     {gameStations.length == 0 && (
                         <>
-                            {[...Array(2)].map(() => (
-                                <StationShimmer />
+                            {[...Array(2)].map((element, index) => (
+                                <StationShimmer key={index} />
                             ))}
                         </>
                     )}
@@ -62,7 +67,7 @@ const SelectStation: React.FC = () => {
                         <Station
                             onClick={() => handleClick(gameStation.station._id)}
                             key={gameStation._id}>
-                            <MdMemory size={100} />
+                            <MdPlayArrow size={100} />
                             <span>{gameStation.station.name}</span>
                         </Station>
                     ))}

@@ -38,6 +38,10 @@ export const Station = styled.div`
     flex-direction: column;
     padding: 0 20px;
 
+    & svg {
+        margin-bottom: 20px;
+    }
+
     &:hover {
         transform: translateY(-5px);
     }
