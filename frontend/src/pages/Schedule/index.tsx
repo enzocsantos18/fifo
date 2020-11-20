@@ -26,9 +26,7 @@ import API from '../../services/api';
 import Modal from '../../components/Modal';
 import { AxiosError } from 'axios';
 import socket, { IScheduleCreateMessage } from '../../services/socket';
-import ScheduleItem, {
-    ISchedule,
-} from '../../components/ScheduleItem';
+import ScheduleItem, { ISchedule } from '../../components/ScheduleItem';
 import { IScheduleDeleteMessage } from './../../services/socket';
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
 import moment from 'moment';
@@ -132,7 +130,7 @@ const Schedule: React.FC = () => {
                 },
             };
         });
-       
+
         setSchedules(schedules);
     }
 
@@ -140,9 +138,20 @@ const Schedule: React.FC = () => {
         setSchedules(currentSchedules => {
             currentSchedules.sort(
                 (a, b) =>
-                    new Date(b.date).getTime() - new Date(a.date).getTime()
+                    new Date(a.date).getTime() - new Date(b.date).getTime()
             );
-            return [...currentSchedules, schedule];
+            const scheduleDate = moment(schedule.date);
+            return [
+                ...currentSchedules,
+                {
+                    ...schedule,
+                    horary: scheduleDate.format('HH:mm'),
+                    user: {
+                        ...schedule.user,
+                        shortName: shortName(schedule.user.name),
+                    },
+                },
+            ];
         });
     }
 
