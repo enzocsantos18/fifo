@@ -17,8 +17,7 @@ app.use(helmet());
 app.use(router);
 app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 
-const server = createServer(app);
-
+export const server = createServer(app);
 export const socket = createSocket(server);
 
 server.listen(process.env['SERVER_PORT']);
