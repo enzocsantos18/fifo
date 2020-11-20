@@ -38,10 +38,8 @@ const SelectGame: React.FC = () => {
     function loadGames() {
         API.get('games')
             .then(({ data }) => {
-                setTimeout(() => {
-                    setStaticGames(data);
-                    setGames(data);
-                }, 500);
+                setStaticGames(data);
+                setGames(data);
             })
             .catch(err => {
                 alert('Não foi possível carregar os jogos!');
