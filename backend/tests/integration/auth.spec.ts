@@ -5,7 +5,7 @@ import faker from 'faker';
 import request from 'supertest';
 import { server } from '../../src/app';
 
-describe('Autenticação ', () => {
+describe('Autenticação ', async () => {
     it('Usuário deve realizar login com email e senha', async () => {
         const password = '12345678';
 
