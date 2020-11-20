@@ -5,7 +5,7 @@ import faker from 'faker';
 import request from 'supertest';
 import { server } from '../../src/app';
 
-describe('Authentication', async () => {
+describe('Autenticação ', () => {
     it('Usuário deve realizar login com email e senha', async () => {
         const password = '12345678';
 
@@ -21,5 +21,29 @@ describe('Authentication', async () => {
         });
 
         expect(response.status).to.equal(200);
-    }).timeout(10000);
+    });
+
+    it('Usuário errando a senha deve retornar 401', async () => {
+        const user = await User.create({
+            name: faker.name.title(),
+            email: faker.internet.email(),
+            password: '12345678',
+        });
+
+        const response = await request(server).post('/auth/login').send({
+            email: user.email,
+            password: 'senhaerrada',
+        });
+
+        expect(response.status).to.equal(401);
+    });
+
+    it('Usuário não cadastrado deve retornar 404', async () => {
+        const response = await request(server).post('/auth/login').send({
+            email: 'naocadastrado@email.com',
+            password: '12345678',
+        });
+
+        expect(response.status).to.equal(404);
+    });
 });
