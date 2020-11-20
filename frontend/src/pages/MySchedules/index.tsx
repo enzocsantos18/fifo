@@ -1,43 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { MdMoreVert, MdRemoveCircleOutline } from 'react-icons/md';
 
-import {
-    Container,
-    DayList,
-    DaySchedules,
-    ScheduleList,
-    Schedule,
-    ScheduleTime,
-    ScheduleJoint,
-    ScheduleDetails,
-    ScheduleInfo,
-} from './styles';
 import moment from 'moment';
 import API from '../../services/api';
-import Dropdown from '../../components/Dropdown';
 import Modal from '../../components/Modal';
-import { ModalActions } from './../../components/Modal/styles';
+import ScheduleItem from '../../components/ScheduleItem';
 import Button from './../../components/Input/Button/index';
+import { Container, DayList, DaySchedules, ScheduleList } from './styles';
+import { ModalActions } from './../../components/Modal/styles';
 import { LineShimmer } from '../../components/Shimmer';
-
-interface IScheduleStation {
-    _id: string;
-    name: string;
-}
-
-interface IScheduleGame {
-    _id: string;
-    name: string;
-}
-
-interface ISchedule {
-    _id: string;
-    date: string;
-    horary: string;
-    station: IScheduleStation;
-    game: IScheduleGame;
-    time: number;
-}
+import { ISchedule } from './../../components/ScheduleItem/index';
 
 interface IDay {
     label: string;
@@ -131,49 +102,26 @@ const MySchedules: React.FC = () => {
                                     {day.schedules.length > 0 ? (
                                         <ScheduleList>
                                             {day.schedules.map(schedule => (
-                                                <Schedule key={schedule._id}>
-                                                    <ScheduleTime>
-                                                        <span>{schedule.horary}</span>
-                                                        <ScheduleJoint />
-                                                    </ScheduleTime>
-                                                    <ScheduleDetails>
-                                                        <ScheduleInfo>
-                                                            <span>
-                                                                {schedule.game.name}
-                                                            </span>
-                                                            <span>
-                                                                {schedule.station.name}
-                                                            </span>
-                                                        </ScheduleInfo>
-                                                        <Dropdown
-                                                            width='150px'
-                                                            items={[
-                                                                {
-                                                                    text: 'Cancelar',
-                                                                    icon: (
-                                                                        <MdRemoveCircleOutline
-                                                                            size={20}
-                                                                        />
-                                                                    ),
-                                                                    onClick: () => {
-                                                                        setDeletingSchedule(
-                                                                            true
-                                                                        );
-                                                                        setDeletingScheduleId(
-                                                                            schedule._id
-                                                                        );
-                                                                    },
-                                                                },
-                                                            ]}>
-                                                            <MdMoreVert size={24} />
-                                                        </Dropdown>
-                                                    </ScheduleDetails>
-                                                </Schedule>
+                                                <ScheduleItem
+                                                    key={schedule._id}
+                                                    variant='game'
+                                                    schedule={schedule}
+                                                    showSettings={true}
+                                                    onDelete={() => {
+                                                        setDeletingScheduleId(
+                                                            schedule._id
+                                                        );
+                                                        setDeletingSchedule(
+                                                            true
+                                                        );
+                                                    }}
+                                                />
                                             ))}
                                         </ScheduleList>
                                     ) : (
                                         <p>
-                                            Você não tem nenhum horário marcado esse dia!
+                                            Você não tem nenhum horário marcado
+                                            esse dia!
                                         </p>
                                     )}
                                 </DaySchedules>
