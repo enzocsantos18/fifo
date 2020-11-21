@@ -19,6 +19,7 @@ import {
     Actions,
     RightContainer,
     LoadingContainer,
+    ScheduleError,
 } from './styles';
 import * as Yup from 'yup';
 import { StageSpinner } from 'react-spinners-kit';
@@ -55,6 +56,7 @@ const Schedule: React.FC = () => {
     }>({});
     const [schedules, setSchedules] = useState<ISchedule[]>([]);
     const [currentTime, setCurrentTime] = useState(45);
+    const [currentDay, setCurrentDay] = useState(0);
 
     async function handleSubmit(data: IFormData) {
         setLoading(true);
@@ -116,21 +118,27 @@ const Schedule: React.FC = () => {
         return response;
     }
 
-    async function loadSchedules() {
+    async function loadSchedules(day: number) {
         setLoadingSchedules(true);
 
         const { station } = location.state;
 
-        let { data: schedules } = await API.get<ISchedule[]>(
-            `schedules/${station}`
+        let { data: schedules } = await API.post<ISchedule[]>(
+            `schedules/${station}`,
+            {
+                day,
+            }
         );
 
         schedules = schedules.map(schedule => {
             const scheduleDate = moment(schedule.date);
+            const scheduleEndDate = moment(schedule.date);
+            scheduleEndDate.add(schedule.time, 'minutes');
 
             return {
                 ...schedule,
                 horary: scheduleDate.format('HH:mm'),
+                endHorary: scheduleEndDate.format('HH:mm'),
                 user: {
                     ...schedule.user,
                     shortName: shortName(schedule.user.name),
@@ -143,23 +151,35 @@ const Schedule: React.FC = () => {
     }
 
     function addSchedule(schedule: ISchedule) {
-        setSchedules(currentSchedules => {
-            currentSchedules.sort(
-                (a, b) =>
-                    new Date(a.date).getTime() - new Date(b.date).getTime()
-            );
+        setCurrentDay(day => {
             const scheduleDate = moment(schedule.date);
-            return [
-                ...currentSchedules,
-                {
-                    ...schedule,
-                    horary: scheduleDate.format('HH:mm'),
-                    user: {
-                        ...schedule.user,
-                        shortName: shortName(schedule.user.name),
+
+            if (scheduleDate.date() !== day) return day;
+
+            setSchedules(currentSchedules => {
+                currentSchedules.sort(
+                    (a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                );
+                const scheduleDate = moment(schedule.date);
+                const scheduleEndDate = moment(schedule.date);
+                scheduleEndDate.add(schedule.time, 'minutes');
+
+                return [
+                    ...currentSchedules,
+                    {
+                        ...schedule,
+                        horary: scheduleDate.format('HH:mm'),
+                        endHorary: scheduleEndDate.format('HH:mm'),
+                        user: {
+                            ...schedule.user,
+                            shortName: shortName(schedule.user.name),
+                        },
                     },
-                },
-            ];
+                ];
+            });
+
+            return day;
         });
     }
 
@@ -188,13 +208,17 @@ const Schedule: React.FC = () => {
         socket.off('schedule-delete');
     }
 
+    function handleDayChange({ day }: IDay) {
+        loadSchedules(day);
+        setCurrentDay(day);
+    }
+
     useEffect(() => {
         if (!location.state) {
             history.push('/schedule/game');
 
             return;
         }
-        loadSchedules();
         setupServer();
 
         return () => unsetupServer();
@@ -208,7 +232,8 @@ const Schedule: React.FC = () => {
                         <h1>Agendar</h1>
 
                         <label>Dia</label>
-                        <DayPicker name='day' />
+
+                        <DayPicker name='day' onChange={handleDayChange} />
 
                         <label>Horário</label>
 
@@ -306,7 +331,7 @@ const Schedule: React.FC = () => {
             <Modal isVisible={Object.keys(responseErrors).length > 0}>
                 <MdSentimentDissatisfied size={70} />
                 <h3>Não foi possível agendar:</h3>
-                {getResponseError()}
+                <ScheduleError>{getResponseError()}</ScheduleError>
                 <Button onClick={() => setResponseErrors({})}>OK</Button>
             </Modal>
         </>
