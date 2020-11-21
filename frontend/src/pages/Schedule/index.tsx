@@ -49,10 +49,12 @@ const Schedule: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const [isLoading, setLoading] = useState(false);
     const [isSubmited, setSubmited] = useState(false);
+    const [isLoadingSchedules, setLoadingSchedules] = useState(false);
     const [responseErrors, setResponseErrors] = useState<{
         [path: string]: string;
     }>({});
     const [schedules, setSchedules] = useState<ISchedule[]>([]);
+    const [currentTime, setCurrentTime] = useState(45);
 
     async function handleSubmit(data: IFormData) {
         setLoading(true);
@@ -63,6 +65,9 @@ const Schedule: React.FC = () => {
                 ['15', '30', '45', '60'],
                 'Tempo inválido!'
             ),
+            horary: Yup.object().shape({
+                isValid: Yup.bool().oneOf([true]),
+            }),
         });
 
         try {
@@ -112,6 +117,8 @@ const Schedule: React.FC = () => {
     }
 
     async function loadSchedules() {
+        setLoadingSchedules(true);
+
         const { station } = location.state;
 
         let { data: schedules } = await API.get<ISchedule[]>(
@@ -132,6 +139,7 @@ const Schedule: React.FC = () => {
         });
 
         setSchedules(schedules);
+        setLoadingSchedules(false);
     }
 
     function addSchedule(schedule: ISchedule) {
@@ -204,17 +212,24 @@ const Schedule: React.FC = () => {
 
                         <label>Horário</label>
 
-                        <TimePicker name='horary' />
+                        <TimePicker
+                            name='horary'
+                            schedules={schedules}
+                            duration={currentTime}
+                        />
 
                         <label>Tempo</label>
                         <Input
                             name='time'
+                            defaultValue={currentTime}
                             as={
                                 <RangeInput
                                     max={60}
                                     min={15}
                                     step={15}
-                                    defaultValue={15}
+                                    onChange={e =>
+                                        setCurrentTime(Number(e.target.value))
+                                    }
                                 />
                             }
                         />
@@ -254,20 +269,26 @@ const Schedule: React.FC = () => {
                 <RightContainer>
                     <h1>Horários marcados</h1>
 
-                    {schedules.length > 0 ? (
-                        <AnimateSharedLayout>
-                            <motion.div layout>
-                                <AnimatePresence>
-                                    {schedules.map(schedule => (
-                                        <ScheduleItem
-                                            key={schedule._id}
-                                            variant='user'
-                                            schedule={schedule}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </motion.div>
-                        </AnimateSharedLayout>
+                    {!isLoadingSchedules ? (
+                        <>
+                            {schedules.length > 0 ? (
+                                <AnimateSharedLayout>
+                                    <motion.div layout>
+                                        <AnimatePresence>
+                                            {schedules.map(schedule => (
+                                                <ScheduleItem
+                                                    key={schedule._id}
+                                                    variant='user'
+                                                    schedule={schedule}
+                                                />
+                                            ))}
+                                        </AnimatePresence>
+                                    </motion.div>
+                                </AnimateSharedLayout>
+                            ) : (
+                                <p>Nenhum horário marcado nesse local e dia!</p>
+                            )}
+                        </>
                     ) : (
                         <LoadingContainer>
                             <StageSpinner color='#626770' size={70} />
