@@ -53,10 +53,14 @@ const MySchedules: React.FC = () => {
 
             schedules.forEach(schedule => {
                 const scheduleDate = moment(schedule.date);
+                const scheduleEndDate = moment(schedule.date);
+                scheduleEndDate.add(schedule.time, 'minutes');
+
                 if (currentDate.day() === scheduleDate.day()) {
                     day.schedules.push({
                         ...schedule,
                         horary: scheduleDate.format('HH:mm'),
+                        endHorary: scheduleEndDate.format('HH:mm'),
                     });
                 }
             });
