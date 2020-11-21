@@ -58,11 +58,14 @@ const DayPicker: React.FC<IProps> = ({ name = 'daypicker', onChange }) => {
 
         setSelected(selectedDay);
         clearError();
-
-        onChange && onChange(selectedDay);
     }
 
     useEffect(loadDays, []);
+
+    useEffect(() => {
+        if (!selected) return;
+        onChange && onChange(selected);
+    }, [selected]);
 
     useEffect(() => {
         registerField({
