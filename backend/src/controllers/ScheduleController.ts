@@ -77,15 +77,8 @@ class ScheduleController {
 
     public async create(req: Request, res: Response): Promise<Response> {
         const schema = Yup.object().shape({
-            date: Yup.date().required('Data deve ser inserida'),
             station: Yup.string().required('Estação deve ser selecionada'),
             game: Yup.string().required('Jogo deve ser selecionado'),
-            time: Yup.number()
-                .positive('O tempo precisa ser positivo')
-                .oneOf(
-                    [15, 30, 45, 60],
-                    'O tempo precisa ser 15, 30, 45 ou 60 minutos'
-                ),
         });
 
         try {
@@ -100,61 +93,27 @@ class ScheduleController {
             return res.status(400).send(errors);
         }
 
-        const { date, station, game, time } = req.body;
+        const { station, game } = req.body;
 
         try {
-            const nextSchedule = await Schedule.findOne({
-                date: { $gte: date },
-                station,
-            }).select('date');
-
-            const previousSchedule = await Schedule.findOne({
-                date: { $lte: date },
-                station,
-            }).select('date time');
-
-            if (nextSchedule) {
-                const currentDate = moment(date);
-                const nextDate = moment(nextSchedule.date);
-
-                currentDate.add(time, 'minutes');
-
-                if (currentDate > nextDate) {
-                    return res.status(400).send({
-                        error: 'Agendamento inválido, horário indisponível',
-                    });
-                }
-            }
-
-            if (previousSchedule) {
-                const currentDate = moment(date);
-                const previousDate = moment(previousSchedule.date);
-
-                previousDate.add(Number(previousSchedule.time), 'minutes');
-
-                if (previousDate > currentDate) {
-                    return res.status(400).send({
-                        error: 'Agendamento inválido, horário indisponível',
-                    });
-                }
-            }
-
-            if (await Schedule.findOne({ date, station }))
-                return res.status(400).send({ error: 'Agendamento já existe' });
-
             const user = await User.findById(res.locals['user'].id);
 
             const schedule = await Schedule.create({
-                date,
+                date: moment().toDate(),
                 station,
                 game,
                 user,
-                time,
             });
 
-            socket.to(station).emit('schedule-create', { schedule });
+            const createdSchedule = await Schedule.findById(schedule._id)
+                .populate('game')
+                .populate('user');
 
-            return res.json(schedule);
+            socket.to(station).emit('schedule-create', {
+                schedule: createdSchedule,
+            });
+
+            return res.json(createdSchedule);
         } catch (err) {
             return res.status(400).send({ error: 'Falha no agendamento' });
         }
