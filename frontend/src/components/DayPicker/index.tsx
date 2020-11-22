@@ -44,7 +44,13 @@ const DayPicker: React.FC<IProps> = ({ name = 'daypicker', onChange }) => {
         }
 
         setCurrentDays(days);
-        setSelected(days[0]);
+
+        for (let i = 0; i < 7; i++) {
+            if (!days[i].disabled) {
+                setSelected(days[i]);
+                break;
+            }
+        }
     }
 
     function handleSelect(day: number) {
