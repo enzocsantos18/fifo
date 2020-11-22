@@ -11,6 +11,10 @@ export function createSocket(server: Server) {
 
     socket.on('connection', (client: Socket) => {
         client.on('subscribe', ({ room }: ISubscribeMessage) => {
+            client.rooms.forEach(room => {
+                client.leave(room);
+            });
+
             if (room) {
                 client.join(room);
             }
