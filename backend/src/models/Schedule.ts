@@ -8,7 +8,6 @@ interface ISchedule extends mongoose.Document {
     user: IUser;
     station: IStation;
     game: IGame;
-    time: Number;
 }
 
 const ScheduleSchema = new mongoose.Schema({
@@ -27,10 +26,6 @@ const ScheduleSchema = new mongoose.Schema({
     game: {
         type: mongoose.Types.ObjectId,
         ref: 'Game',
-    },
-    time: {
-        type: Number,
-        required: true
     },
 });
 
