@@ -23,21 +23,54 @@ interface IProps {
     name?: string;
     schedules?: ISchedule[];
     duration?: number;
+    day: number;
 }
 
 const TimePicker: React.FC<IProps> = ({
     name = 'timepicker',
     schedules,
     duration = 45,
+    day,
 }) => {
     let [hours, setHours] = useState(9);
     let [minutes, setMinutes] = useState(0);
+    let [minHours, setMinHours] = useState(9);
+    let [minMinutes, setMinMinutes] = useState(0);
     const [reservatedTimes, setReservatedTimes] = useState<IReservatedTime[]>(
         []
     );
     const [isValid, setValid] = useState(true);
 
     const { fieldName, registerField } = useField(name);
+
+    function loadNextTime() {
+        const currentDate = moment();
+        const currentMinutes = currentDate.get('minutes');
+        const currentHours = currentDate.get('hours');
+
+        if (currentMinutes >= 0 && currentMinutes <= 15) {
+            setMinutes(15);
+            setMinMinutes(15);
+        }
+
+        if (currentMinutes > 15 && currentMinutes <= 30) {
+            setMinutes(30);
+            setMinMinutes(30);
+        }
+
+        if (currentMinutes > 30 && currentMinutes <= 45) {
+            setMinutes(45);
+            setMinMinutes(45);
+        }
+
+        if (currentMinutes > 45 && currentMinutes <= 59) {
+            setMinutes(45);
+            setMinMinutes(45);
+        }
+
+        setHours(currentHours < 6 ? 6 : currentHours);
+        setMinHours(currentHours);
+    }
 
     function isBetweenReservated() {
         const startDate = moment(),
@@ -69,11 +102,17 @@ const TimePicker: React.FC<IProps> = ({
     }
 
     function handleAdd(quantity: number) {
+        if (hours == 23 && minutes == 45) return;
+
         minutes += quantity;
 
         if (minutes >= 60) {
             minutes -= 60;
             hours++;
+        }
+
+        if (hours > 23) {
+            hours = 23;
         }
 
         setValid(!isBetweenReservated());
@@ -82,11 +121,23 @@ const TimePicker: React.FC<IProps> = ({
     }
 
     function handleSubtract(quantity: number) {
+        if (
+            moment().date() == day &&
+            minutes == minMinutes &&
+            hours == minHours
+        )
+            return;
+        if (minutes == 0 && hours == 6) return;
+
         minutes -= quantity;
 
         if (minutes < 0) {
             minutes = 60 + minutes;
             hours--;
+        }
+
+        if (hours < 6) {
+            hours = 6;
         }
 
         setValid(!isBetweenReservated());
@@ -106,6 +157,10 @@ const TimePicker: React.FC<IProps> = ({
             },
         });
     }, [fieldName, registerField, hours, minutes]);
+
+    useEffect(() => {
+        loadNextTime();
+    }, [day]);
 
     useEffect(() => {
         const reservated: IReservatedTime[] = [];
