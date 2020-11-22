@@ -26,9 +26,7 @@ import { StageSpinner } from 'react-spinners-kit';
 import API from '../../services/api';
 import Modal from '../../components/Modal';
 import { AxiosError } from 'axios';
-import socket, { IScheduleCreateMessage } from '../../services/socket';
 import ScheduleItem, { ISchedule } from '../../components/ScheduleItem';
-import { IScheduleDeleteMessage } from './../../services/socket';
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion';
 import moment from 'moment';
 import { shortName } from '../../util';
@@ -189,25 +187,6 @@ const Schedule: React.FC = () => {
         );
     }
 
-    function setupServer() {
-        const { station } = location.state;
-
-        socket.emit('subscribe', { room: station });
-
-        socket.on('schedule-create', (data: IScheduleCreateMessage) => {
-            addSchedule(data.schedule);
-        });
-
-        socket.on('schedule-delete', (data: IScheduleDeleteMessage) => {
-            removeSchedule(data.id);
-        });
-    }
-
-    function unsetupServer() {
-        socket.off('schedule-create');
-        socket.off('schedule-delete');
-    }
-
     function handleDayChange({ day }: IDay) {
         loadSchedules(day);
         setCurrentDay(day);
@@ -219,9 +198,6 @@ const Schedule: React.FC = () => {
 
             return;
         }
-        setupServer();
-
-        return () => unsetupServer();
     }, []);
 
     return (
