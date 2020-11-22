@@ -21,6 +21,8 @@ export const Container = styled(motion.div)`
             margin-top: 20px;
         }
     }
+
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const RightContainer = styled(Container)`

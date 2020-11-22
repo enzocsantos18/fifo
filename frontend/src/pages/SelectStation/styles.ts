@@ -13,6 +13,7 @@ export const Container = styled(motion.div)`
     background: #fff;
     border-radius: 8px;
     padding: 30px 40px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const StationList = styled.div`
