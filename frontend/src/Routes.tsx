@@ -8,13 +8,13 @@ import {
 } from 'react-router-dom';
 import Nav from './components/Nav';
 import Login from './pages/Login';
-import MySchedules from './pages/MySchedules';
 import Register from './pages/Register';
 import Schedule from './pages/Schedule';
 import SelectGame from './pages/SelectGame';
 import SelectStation from './pages/SelectStation';
 import Auth from './services/auth';
 import MyAccount from './pages/MyAccount';
+import Queue from './pages/Queue';
 
 const PrivateRoute: React.FC<RouteProps> = props => {
     if (!Auth.hasToken()) {
@@ -52,9 +52,9 @@ const Routes: React.FC = () => {
                 <PrivateRoute path='/schedule/game' component={SelectGame} />
                 <PrivateRoute path='/schedule/station' component={SelectStation} />
                 <PrivateRoute path='/schedule/final' component={Schedule} />
-                <PrivateRoute path='/account/schedules' component={MySchedules} />
+                <PrivateRoute path='/queue' component={Queue} />
+                <PrivateRoute path='/' component={SelectGame} exact />
                 <PrivateRoute path='/account/settings' component={MyAccount} />
-                <PrivateRoute path='/' component={MySchedules} exact />
             </Switch>
         </BrowserRouter>
     );
