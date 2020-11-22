@@ -33,10 +33,7 @@ const Nav: React.FC = () => {
     return (
         <Container>
             <Content>
-                <LinkList>
-                    <LinkItem to='/account/schedules'>Meus horários</LinkItem>
-                    <LinkItem to='/schedule/game'>Agendar</LinkItem>
-                </LinkList>
+                <LinkList></LinkList>
                 <Dropdown
                     top='70px'
                     width='180px'
