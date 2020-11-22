@@ -241,6 +241,7 @@ const Schedule: React.FC = () => {
                             name='horary'
                             schedules={schedules}
                             duration={currentTime}
+                            day={currentDay}
                         />
 
                         <label>Tempo</label>
