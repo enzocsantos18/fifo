@@ -39,13 +39,9 @@ const Nav: React.FC = () => {
                     width='180px'
                     items={[
                         {
-                            text: 'Meus horários',
-                            route: '/account/schedules',
+                            text: 'Fila',
+                            route: '/',
                             icon: <MdWatchLater size={20} />,
-                        },
-                        {
-                            text: 'Fila - ao vivo',
-                            icon: <MdFiberManualRecord size={20} />,
                         },
                         {
                             text: 'Minha conta',
