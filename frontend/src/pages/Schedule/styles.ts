@@ -21,12 +21,20 @@ export const Container = styled(motion.div)`
             margin-top: 20px;
         }
     }
+
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const RightContainer = styled(Container)`
     width: 400px;
     margin-left: 20px;
     overflow-y: auto;
+
+    & p {
+        text-align: center;
+        color: var(--text0);
+        font-size: 14px;
+    }
 `;
 
 export const LoadingContainer = styled.div`
@@ -45,4 +53,9 @@ export const Actions = styled.div`
     & button {
         width: 48%;
     }
+`;
+
+export const ScheduleError = styled.div`
+    text-align: center;
+    margin-bottom: 20px;
 `;

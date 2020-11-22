@@ -44,7 +44,7 @@ const Login: React.FC = () => {
             })
                 .then(({ data }) => {
                     Auth.setToken(data['token']);
-                    window.location.assign('/account/schedules');
+                    window.location.assign('/');
                 })
                 .catch(err => {
                     setError(err['error']);

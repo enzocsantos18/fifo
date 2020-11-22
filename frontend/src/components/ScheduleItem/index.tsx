@@ -8,6 +8,7 @@ import {
     ScheduleInfo,
     ScheduleUserInfo,
     ShimmerContainer,
+    ScheduleHorary,
 } from './styles';
 
 import Dropdown from '../Dropdown';
@@ -39,6 +40,7 @@ export interface ISchedule {
     _id: string;
     date: string;
     horary: string;
+    endHorary: string;
     station: IScheduleStation;
     game: IScheduleGame;
     user: IScheduleUser;
@@ -68,7 +70,10 @@ const ScheduleItem: React.FC<IProps> = ({
             {variant == 'game' && (
                 <>
                     <ScheduleTime>
-                        <span>{schedule.horary}</span>
+                        <ScheduleHorary>
+                            <span>{schedule.horary}</span>
+                            <span>{schedule.endHorary}</span>
+                        </ScheduleHorary>
                         <ScheduleJoint />
                     </ScheduleTime>
                     <ScheduleDetails>
@@ -98,7 +103,10 @@ const ScheduleItem: React.FC<IProps> = ({
             {variant == 'user' && (
                 <>
                     <ScheduleTime>
-                        <span>{schedule.horary}</span>
+                        <ScheduleHorary>
+                            <span>{schedule.horary}</span>
+                            <span>{schedule.endHorary}</span>
+                        </ScheduleHorary>
                         <ScheduleJoint />
                     </ScheduleTime>
                     <ScheduleDetails>

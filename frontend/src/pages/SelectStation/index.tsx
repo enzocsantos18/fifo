@@ -33,7 +33,7 @@ const SelectStation: React.FC = () => {
     const [gameStations, setGameStations] = useState<IGameStation[]>([]);
 
     function handleClick(id: string) {
-        history.push('/schedule/final', {
+        history.push('/queue', {
             game: location.state.game,
             station: id,
         });

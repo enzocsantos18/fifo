@@ -33,22 +33,15 @@ const Nav: React.FC = () => {
     return (
         <Container>
             <Content>
-                <LinkList>
-                    <LinkItem to='/account/schedules'>Meus horários</LinkItem>
-                    <LinkItem to='/schedule/game'>Agendar</LinkItem>
-                </LinkList>
+                <LinkList></LinkList>
                 <Dropdown
                     top='70px'
                     width='180px'
                     items={[
                         {
-                            text: 'Meus horários',
-                            route: '/account/schedules',
+                            text: 'Fila',
+                            route: '/',
                             icon: <MdWatchLater size={20} />,
-                        },
-                        {
-                            text: 'Fila - ao vivo',
-                            icon: <MdFiberManualRecord size={20} />,
                         },
                         {
                             text: 'Minha conta',

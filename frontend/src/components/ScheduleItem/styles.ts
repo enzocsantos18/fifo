@@ -53,12 +53,23 @@ export const ScheduleTime = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+`;
+
+export const ScheduleHorary = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 
     & span {
         color: #fff;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         margin-right: 20px;
+    }
+
+    & span:last-child {
+        font-size: 12px;
+        font-weight: 500;
     }
 `;
 
