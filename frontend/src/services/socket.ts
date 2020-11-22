@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { ISchedule } from '../components/ScheduleItem';
+import { ISchedule } from './../pages/Queue/';
 
 export default io('http://localhost:3333');
 
