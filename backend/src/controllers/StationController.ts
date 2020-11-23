@@ -8,7 +8,7 @@ import Station from '../models/Station';
 
 class StationController {
     public async index(req: Request, res: Response): Promise<Response> {
-        const stations = await GameStation.find();
+        const stations = await Station.find();
 
         return res.json(stations);
     }
