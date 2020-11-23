@@ -15,6 +15,7 @@ import SelectStation from './pages/SelectStation';
 import Auth from './services/auth';
 import MyAccount from './pages/MyAccount';
 import Queue from './pages/Queue';
+import Admin from './pages/Admin';
 
 const PrivateRoute: React.FC<RouteProps> = props => {
     if (!Auth.hasToken()) {
@@ -55,6 +56,7 @@ const Routes: React.FC = () => {
                 <PrivateRoute path='/queue' component={Queue} />
                 <PrivateRoute path='/' component={SelectGame} exact />
                 <PrivateRoute path='/account/settings' component={MyAccount} />
+                <PrivateRoute path='/admin' component={Admin} />
             </Switch>
         </BrowserRouter>
     );
