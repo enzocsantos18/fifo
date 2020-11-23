@@ -14,7 +14,11 @@ interface IProps {
     onChange?(event: IAvatarPickerChangeEvent): void;
 }
 
-const AvatarPicker: React.FC<IProps> = ({ name = 'image', defaultValue, onChange }) => {
+const AvatarPicker: React.FC<IProps> = ({
+    name = 'image',
+    defaultValue,
+    onChange,
+}) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<File | null>(null);
     const [imageSrc, setImageSrc] = useState('');
@@ -66,13 +70,16 @@ const AvatarPicker: React.FC<IProps> = ({ name = 'image', defaultValue, onChange
                 <CameraButton>
                     <MdCameraAlt size={20} />
                 </CameraButton>
-                {imageSrc !== '' ? (
-                    <img src={imageSrc} />
-                ) : (
-                    <p>
-                        Adicionar foto <br /> (opcional)
-                    </p>
+
+                {imageSrc !== '' && (
+                    <>
+                        <img src={imageSrc} />
+                        <p>
+                            Alterar <br /> imagem
+                        </p>
+                    </>
                 )}
+
                 <input
                     ref={fileInputRef}
                     type='file'
