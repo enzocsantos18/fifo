@@ -38,6 +38,11 @@ router.post(
     GameController.create
 );
 router.post(
+    '/games/:id',
+    [GameBannerStorage.single('image'), AuthMiddleware, AdminMiddleware],
+    GameController.update
+);
+router.post(
     '/games/stations',
     [AuthMiddleware, AdminMiddleware],
     StationController.create
