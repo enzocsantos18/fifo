@@ -1,7 +1,12 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Form } from '@unform/web';
 import AvatarPicker from '../../components/AvatarPicker';
-import { Container, DeleteAccountText, ReadOnly, ReadOnlyField } from './styles';
+import {
+    Container,
+    DeleteAccountText,
+    ReadOnly,
+    ReadOnlyField,
+} from './styles';
 import { IAvatarPickerChangeEvent } from './../../components/AvatarPicker';
 import API from './../../services/api';
 import Button from './../../components/Input/Button';
@@ -44,7 +49,9 @@ const MyAccount: React.FC = () => {
     const deleteAccountRef = useRef<FormHandles>(null);
 
     function handleAvatarChange(e: IAvatarPickerChangeEvent) {
-        //Atualizar usuário
+        const formData = new FormData();
+        formData.append('image', e.image as File);
+        API.patch('users/', formData);
     }
 
     async function handleChangePasswordSubmit(data: IResetPasswordFormData) {
@@ -99,8 +106,13 @@ const MyAccount: React.FC = () => {
                 abortEarly: false,
             });
 
-            //Alterar para post no backend
-            API.delete('users/')
+            setDeleteAccountErrored(true);
+            setDeleteAccountError('Funcionalidade indisponível no momento.');
+
+            /*
+            API.post('users/', {
+                password: data.password,
+            })
                 .then(() => {
                     setDeletingAccount(false);
                 })
@@ -110,7 +122,7 @@ const MyAccount: React.FC = () => {
                 })
                 .finally(() => {
                     setDeleteAccountLoading(false);
-                });
+                });*/
         } catch (err) {
             const errors: { [path: string]: string } = {};
             err.inner.forEach((error: Yup.ValidationError) => {
@@ -139,8 +151,6 @@ const MyAccount: React.FC = () => {
         }
     }, [isDeletingAccount]);
 
-    console.log(deleteAccountTime);
-
     return (
         <>
             <Container>
@@ -156,25 +166,36 @@ const MyAccount: React.FC = () => {
 
                     <ReadOnly>
                         <ReadOnlyField>
-                            <p>Nome</p>Leonardo Camargo
+                            <p>Nome</p>
+                            {userContext?.name}
                         </ReadOnlyField>
 
                         <ReadOnlyField>
-                            <p>Email</p>camargo.leo09@gmail.com
+                            <p>Email</p>
+                            {userContext?.email}
                         </ReadOnlyField>
                     </ReadOnly>
 
-                    <Button variant='light' onClick={() => setChangingPassword(true)}>
+                    <Button
+                        variant='light'
+                        onClick={() => setChangingPassword(true)}>
                         Alterar senha
                     </Button>
-                    <Button variant='light' onClick={() => setDeletingAccount(true)}>
+                    <Button
+                        variant='light'
+                        onClick={() => setDeletingAccount(true)}>
                         <span className='red'>Excluir minha conta</span>
                     </Button>
                 </Form>
             </Container>
-            <Modal isVisible={isChangingPassword} width='400px' onClose={() => setChangingPassword(false)}>
+            <Modal
+                isVisible={isChangingPassword}
+                width='400px'
+                onClose={() => setChangingPassword(false)}>
                 <h2>Alterar senha</h2>
-                <Form onSubmit={handleChangePasswordSubmit} ref={changePasswordRef}>
+                <Form
+                    onSubmit={handleChangePasswordSubmit}
+                    ref={changePasswordRef}>
                     <TextInput
                         name='password'
                         placeholder='Senha atual'
@@ -205,15 +226,22 @@ const MyAccount: React.FC = () => {
             <Modal isVisible={isChangePasswordErrored}>
                 <MdSentimentDissatisfied size={70} />
                 <h3>{changePasswordError}</h3>
-                <Button onClick={() => setChangePasswordErrored(false)}>OK</Button>
+                <Button onClick={() => setChangePasswordErrored(false)}>
+                    OK
+                </Button>
             </Modal>
-            <Modal isVisible={isDeletingAccount} width='400px' onClose={() => setDeletingAccount(false)}>
+            <Modal
+                isVisible={isDeletingAccount}
+                width='400px'
+                onClose={() => setDeletingAccount(false)}>
                 <h2>Excluir minha conta</h2>
                 <DeleteAccountText>
                     <p>Tem certeza que deseja excluir sua conta?</p>
                     <p>Essa ação não poderá ser desfeita!</p>
                 </DeleteAccountText>
-                <Form onSubmit={handleDeleteAcountSubmit} ref={deleteAccountRef}>
+                <Form
+                    onSubmit={handleDeleteAcountSubmit}
+                    ref={deleteAccountRef}>
                     <TextInput
                         name='password'
                         placeholder='Confirme sua senha atual'
@@ -222,7 +250,9 @@ const MyAccount: React.FC = () => {
                     <Button
                         type='submit'
                         variant='secondary'
-                        disabled={isDeleteAccountLoading || deleteAccountTime > 0}>
+                        disabled={
+                            isDeleteAccountLoading || deleteAccountTime > 0
+                        }>
                         {isDeleteAccountLoading ? (
                             <StageSpinner size={24} />
                         ) : (
@@ -234,7 +264,9 @@ const MyAccount: React.FC = () => {
             <Modal isVisible={isDeleteAccountErrored}>
                 <MdSentimentDissatisfied size={70} />
                 <h3>{deleteAccountError}</h3>
-                <Button onClick={() => setDeletingAccount(false)}>OK</Button>
+                <Button onClick={() => setDeleteAccountErrored(false)}>
+                    OK
+                </Button>
             </Modal>
         </>
     );
