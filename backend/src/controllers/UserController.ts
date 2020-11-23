@@ -159,7 +159,7 @@ class UserController {
         }
     }
 
-    public async deleteUser(req: Request, res: Response): Promise<Response> {
+    public async destroy(req: Request, res: Response): Promise<Response> {
         const user = await User.findById(res.locals['user'].id).select(
             '+password'
         );
@@ -170,7 +170,13 @@ class UserController {
                     .status(404)
                     .send({ error: 'Usuário não localizado.' });
 
-            if (!bcrypt.compareSync(req.body.password, user.password))
+            const { password } = req.body;
+
+            if (!password) {
+                return res.status(400).send({ error: 'Digite a senha.' });
+            }
+
+            if (!bcrypt.compareSync(password, user.password))
                 return res.status(400).send({ error: 'Senha incorreta.' });
 
             await User.findByIdAndDelete(user._id);
@@ -191,6 +197,19 @@ class UserController {
                     .send({ error: 'Usuário não localizado.' });
 
             if (req.file) {
+                if (user.imageURL) {
+                    const imagePath = path.resolve('public', 'uploads', 'user');
+                    fs.unlink(path.resolve(imagePath, user.imageURL), err => {
+                        if (err) return;
+
+                        fs.unlinkSync(
+                            path.resolve(
+                                imagePath,
+                                'thumbnail-' + user.imageURL
+                            )
+                        );
+                    });
+                }
                 await sharp(req.file.path, {
                     failOnError: false,
                 })
@@ -207,6 +226,7 @@ class UserController {
                 imageURL: req.file ? req.file.filename : null,
             });
         } catch (err) {
+            console.log(err);
             return res.status(400).send({ error: 'Imagem não atualizada' });
         }
 

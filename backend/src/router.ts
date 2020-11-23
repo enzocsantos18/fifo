@@ -23,7 +23,12 @@ router.post(
     AuthMiddleware,
     UserController.changePassword
 );
-router.post('/users/delete', AuthMiddleware, UserController.deleteUser);
+router.post('/users/delete', AuthMiddleware, UserController.destroy);
+router.patch(
+    '/users',
+    [UserAvatarStorage.single('image'), AuthMiddleware],
+    UserController.update
+);
 
 //Games
 router.get('/games', GameController.index);
