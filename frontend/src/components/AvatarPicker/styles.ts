@@ -26,7 +26,11 @@ export const Container = styled.div`
 
     & p {
         font-size: 14px;
-        color: var(--text0);
+        color: #fff;
+        position: absolute;
+        transition: all 0.2s ease;
+        opacity: 0;
+        pointer-events: none;
     }
 
     & img {
@@ -34,6 +38,10 @@ export const Container = styled.div`
         width: 100%;
         object-fit: cover;
         border-radius: 50%;
+    }
+
+    & img:hover + p {
+        opacity: 1;
     }
 
     box-shadow: 1px 1px 4px var(--text0);
@@ -55,4 +63,8 @@ export const CameraButton = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+`;
+
+export const ImagePreview = styled.div`
+    position: relative;
 `;

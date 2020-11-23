@@ -9,6 +9,7 @@ export const Container = styled.div`
     padding: 30px 40px;
     border-radius: 16px;
     width: 500px;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
 
     & h1 {
         margin-bottom: 40px;
@@ -45,7 +46,7 @@ export const DeleteAccountText = styled.div`
     & p {
         color: var(--text1);
         font-size: 14px;
-        margin: 4px 0
+        margin: 4px 0;
     }
 
     & p:last-child {
