@@ -44,6 +44,14 @@ router.post(
 );
 router.get('/games/:id/stations', StationController.indexByGame);
 
+//Stations
+router.get('/stations', StationController.index);
+router.post(
+    '/stations/:id',
+    [AuthMiddleware, AdminMiddleware],
+    StationController.update
+);
+
 //Schedules
 router.get('/schedules', AuthMiddleware, ScheduleController.index);
 router.get('/schedules/:id', ScheduleController.indexByStation);
