@@ -7,6 +7,12 @@ import * as Yup from 'yup';
 import Station from '../models/Station';
 
 class StationController {
+    public async index(req: Request, res: Response): Promise<Response> {
+        const stations = await GameStation.find();
+
+        return res.json(stations);
+    }
+
     public async indexByGame(req: Request, res: Response): Promise<Response> {
         try {
             const game = await Game.findById(req.params.id);
@@ -43,6 +49,23 @@ class StationController {
         const station = await Station.create(req.body);
 
         return res.json(station);
+    }
+
+    public async update(req: Request, res: Response): Promise<Response> {
+        const station = await Station.findById(req.params.id);
+
+        try {
+            await Station.findByIdAndUpdate(station.id, {
+                ...req.body,
+            });
+        } catch (err) {
+            console.log(err);
+            return res
+                .status(400)
+                .send({ error: 'Dados da estação não atualizadas' });
+        }
+
+        return;
     }
 }
 
