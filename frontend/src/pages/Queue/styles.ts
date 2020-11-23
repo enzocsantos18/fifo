@@ -31,17 +31,22 @@ export const QueueList = styled.div`
     flex-wrap: wrap;
     margin-left: -10px;
     margin-right: -10px;
+    min-height: 120px;
+
+    & h2 {
+        margin-left: 10px;
+    }
 `;
 
 export const QueueItem = styled.div`
     width: 220px;
     height: 100px;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    border: 3px solid var(--light1);
     border-radius: 8px;
     margin: 0 10px;
     margin-bottom: 20px;
     position: relative;
-    padding: 10px 20px 10px 30px;
+    padding: 5px 20px 10px 30px;
 
     &::before {
         content: '';
@@ -54,6 +59,19 @@ export const QueueItem = styled.div`
         left: 0;
         top: 0;
     }
+`;
+
+export const QueueItemShimmerContainer = styled.div`
+    width: 220px;
+    height: 100px;
+    border: 2px solid var(--light1);
+    border-radius: 8px;
+    margin: 0 10px;
+    margin-bottom: 20px;
+    padding: 5px 20px 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 `;
 
 export const QueueProfile = styled.div`
@@ -78,7 +96,8 @@ export const QueueDetails = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 5px;
+    margin-top: 3px;
+    padding-right: 10px;
 
     & span {
         font-size: 12px;
