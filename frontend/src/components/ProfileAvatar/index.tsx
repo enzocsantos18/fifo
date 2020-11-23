@@ -5,9 +5,15 @@ interface IProps {
     imageURL?: string;
     username: string;
     size?: number;
+    showBorder?: boolean;
 }
 
-const ProfileAvatar: React.FC<IProps> = ({ imageURL, username, size = 50 }) => {
+const ProfileAvatar: React.FC<IProps> = ({
+    imageURL,
+    username,
+    size = 50,
+    showBorder = false,
+}) => {
     const usernameParts = username?.split(' ');
     let shortUsername = '';
 
@@ -24,7 +30,9 @@ const ProfileAvatar: React.FC<IProps> = ({ imageURL, username, size = 50 }) => {
     }
 
     return (
-        <Container style={{ width: size, height: size }}>
+        <Container
+            style={{ width: size, height: size }}
+            showBorder={showBorder}>
             {imageURL ? <img src={imageURL} /> : <p>{shortUsername}</p>}
         </Container>
     );

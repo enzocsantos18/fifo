@@ -11,6 +11,7 @@ import {
     QueueStatus,
     QueueStatusCircle,
     Actions,
+    QueueItemShimmerContainer,
 } from './styles';
 import ProfileAvatar from './../../components/ProfileAvatar';
 import Button from './../../components/Input/Button/index';
@@ -23,6 +24,7 @@ import socket, { IScheduleCreateMessage } from '../../services/socket';
 import { IScheduleDeleteMessage } from './../../services/socket';
 import { media } from '../../services/media';
 import Modal from '../../components/Modal';
+import { CircleShimmer, LineShimmer } from '../../components/Shimmer';
 
 interface ILocationState {
     game?: string;
@@ -196,38 +198,69 @@ const Queue: React.FC = () => {
                 <Container>
                     <h1>Fila</h1>
                     <QueueList>
-                        {queue.map((schedule, index) => (
-                            <QueueItem key={schedule._id}>
-                                <QueueProfile>
-                                    <span>{schedule.user.shortName}</span>
-                                    <ProfileAvatar
-                                        imageURL={
-                                            schedule.user.imageURL
-                                                ? media(
-                                                      'user',
-                                                      schedule.user.imageURL,
-                                                      true
-                                                  )
-                                                : ''
-                                        }
-                                        username={schedule.user.name}
-                                        size={40}
-                                    />
-                                </QueueProfile>
-                                <QueueGame>
-                                    <span>{schedule.game.name}</span>
-                                </QueueGame>
-                                <QueueDetails>
-                                    {index == 0 && (
-                                        <QueueStatus>
-                                            <QueueStatusCircle />
-                                            <span>JOGANDO</span>
-                                        </QueueStatus>
-                                    )}
-                                    <span>{index + 1}º</span>
-                                </QueueDetails>
-                            </QueueItem>
-                        ))}
+                        {!isLoading ? (
+                            <>
+                                {queue.length > 0 ? (
+                                    <>
+                                        {queue.map((schedule, index) => (
+                                            <QueueItem key={schedule._id}>
+                                                <QueueProfile>
+                                                    <span>
+                                                        {
+                                                            schedule.user
+                                                                .shortName
+                                                        }
+                                                    </span>
+                                                    <ProfileAvatar
+                                                        imageURL={
+                                                            schedule.user
+                                                                .imageURL
+                                                                ? media(
+                                                                      'user',
+                                                                      schedule
+                                                                          .user
+                                                                          .imageURL,
+                                                                      true
+                                                                  )
+                                                                : ''
+                                                        }
+                                                        username={
+                                                            schedule.user.name
+                                                        }
+                                                        size={40}
+                                                    />
+                                                </QueueProfile>
+                                                <QueueGame>
+                                                    <span>
+                                                        {schedule.game.name}
+                                                    </span>
+                                                </QueueGame>
+                                                <QueueDetails>
+                                                    {index == 0 && (
+                                                        <QueueStatus>
+                                                            <QueueStatusCircle />
+                                                            <span>JOGANDO</span>
+                                                        </QueueStatus>
+                                                    )}
+                                                    <span>{index + 1}º</span>
+                                                </QueueDetails>
+                                            </QueueItem>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <h2>
+                                        Ainda não há ninguém na fila. Seja o
+                                        primeiro!
+                                    </h2>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                {[...Array(3)].map((element, index) => (
+                                    <QueueItemShimmer key={index} />
+                                ))}
+                            </>
+                        )}
                     </QueueList>
                     <Actions>
                         <Button
@@ -245,7 +278,7 @@ const Queue: React.FC = () => {
                             type='submit'
                             variant='primary'
                             disabled={isLoading || isUpdating}>
-                            {isLoading || isUpdating ? (
+                            {isUpdating ? (
                                 <StageSpinner size={24} />
                             ) : (
                                 <>
@@ -277,6 +310,17 @@ const Queue: React.FC = () => {
                 </Button>
             </Modal>
         </>
+    );
+};
+
+const QueueItemShimmer: React.FC = () => {
+    return (
+        <QueueItemShimmerContainer>
+            <LineShimmer width='100px' height='7px' style={{ marginTop: 15 }} />
+            <CircleShimmer width='40px' height='40px' />
+            <LineShimmer width='100px' height='7px' style={{ marginTop: 10 }} />
+            <LineShimmer width='100px' height='7px' />
+        </QueueItemShimmerContainer>
     );
 };
 

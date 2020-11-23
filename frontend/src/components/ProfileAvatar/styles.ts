@@ -1,6 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
+interface IContainerProps {
+    showBorder: boolean;
+}
+
+export const Container = styled.div<IContainerProps>`
     border-radius: 50%;
     background: var(--primary1);
     display: flex;
@@ -19,4 +23,10 @@ export const Container = styled.div`
         font-weight: 700;
         color: #fff;
     }
+
+    ${p =>
+        p.showBorder &&
+        css`
+            border: 3px solid var(--primary2);
+        `}
 `;

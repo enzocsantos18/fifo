@@ -64,6 +64,7 @@ const Nav: React.FC = () => {
                                         media('user', userData.imageURL, true)
                                     }
                                     username={userData.name}
+                                    showBorder={true}
                                 />
                                 <MdExpandMore size={24} />
                             </div>
