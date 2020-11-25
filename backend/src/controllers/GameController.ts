@@ -69,7 +69,6 @@ class GameController {
 
             return res.json(game);
         } catch (err) {
-            console.log(err);
             fs.unlinkSync(req.file.path);
             return res.status(400).send({ game: 'Jogo inválido' });
         }
@@ -79,6 +78,8 @@ class GameController {
         const game = await Game.findById(req.params.id);
 
         try {
+            await GameStation.deleteMany({ game });
+
             if (req.file) {
                 if (game.imageURL) {
                     const imagePath = path.resolve('public', 'uploads', 'game');
@@ -107,7 +108,25 @@ class GameController {
             }
             await Game.findByIdAndUpdate(game.id, {
                 ...req.body,
-                imageURL: req.file ? req.file.filename : null,
+                imageURL: req.file ? req.file.filename : game.imageURL,
+            });
+
+            const stations = JSON.parse(req.body['stations']);
+
+            stations.forEach(async (stationId: string) => {
+                if (await Station.exists({ _id: stationId })) {
+                    const station = await Station.findById(stationId);
+
+                    await GameStation.create({
+                        game,
+                        station,
+                    });
+                } else {
+                    if (req.file) fs.unlinkSync(req.file.path);
+                    return res
+                        .status(400)
+                        .send({ station: 'Estação desconhecida' });
+                }
             });
 
             return res.status(200).send('Dados do jogo atualizados');
@@ -117,8 +136,6 @@ class GameController {
                 .status(400)
                 .send({ error: 'Dados do jogo não atualizados' });
         }
-
-        return;
     }
 }
 
