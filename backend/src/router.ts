@@ -37,7 +37,7 @@ router.post(
     [GameBannerStorage.single('image'), AuthMiddleware, AdminMiddleware],
     GameController.create
 );
-router.post(
+router.patch(
     '/games/:id',
     [GameBannerStorage.single('image'), AuthMiddleware, AdminMiddleware],
     GameController.update
