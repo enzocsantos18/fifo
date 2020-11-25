@@ -27,12 +27,17 @@ export const GameList = styled.div`
 
 export const GameBanner = styled.div`
     height: 200px;
+
     margin: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
 
     & img {
         height: 200px;
+        max-width: 160px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
     }
 
     &:hover {
