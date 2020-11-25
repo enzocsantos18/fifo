@@ -10,30 +10,42 @@ interface IProps {
     onClose?(): void;
 }
 
+const wrapperVariants = {
+    open: { opacity: 1, display: 'flex' },
+    closed: {
+        opacity: 0,
+
+        transitionEnd: {
+            display: 'none',
+        },
+    },
+};
+
+const containerVariants = {
+    open: { opacity: 1, translateY: 0 },
+    closed: { opacity: 0, translateY: 200 },
+};
+
 const Modal: React.FC<IProps> = ({ children, isVisible, width, onClose }) => {
     return (
         <AnimateSharedLayout type='crossfade'>
             <AnimatePresence>
-                {isVisible && (
-                    <Wrapper
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}>
-                        <Container
-                            initial={{ opacity: 0, translateY: 200 }}
-                            animate={{ opacity: 1, translateY: 0 }}
-                            exit={{ opacity: 0, translateY: 200 }}
-                            style={{ width: width ? width : '300px' }}>
-                            {onClose && (
-                                <Header>
-                                    <MdClose onClick={onClose} size={24} />
-                                </Header>
-                            )}
+                <Wrapper
+                    animate={isVisible ? 'open' : 'closed'}
+                    variants={wrapperVariants}>
+                    <Container
+                        animate={isVisible ? 'open' : 'closed'}
+                        variants={containerVariants}
+                        style={{ width: width ? width : '300px' }}>
+                        {onClose && (
+                            <Header>
+                                <MdClose onClick={onClose} size={24} />
+                            </Header>
+                        )}
 
-                            {children}
-                        </Container>
-                    </Wrapper>
-                )}
+                        {children}
+                    </Container>
+                </Wrapper>
             </AnimatePresence>
         </AnimateSharedLayout>
     );

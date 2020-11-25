@@ -6,6 +6,7 @@ export interface IUser {
     name: string;
     email: string;
     imageURL?: string;
+    isAdmin: boolean;
 }
 
 export const UserContext = React.createContext<IUser | null>(null);
