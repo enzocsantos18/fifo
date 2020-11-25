@@ -6,6 +6,8 @@ import {
 import * as Yup from 'yup';
 import Station from '../models/Station';
 import fs from 'fs';
+import sharp from 'sharp';
+import path from 'path';
 import { Types } from 'mongoose';
 
 class GameController {
@@ -71,6 +73,52 @@ class GameController {
             fs.unlinkSync(req.file.path);
             return res.status(400).send({ game: 'Jogo inválido' });
         }
+    }
+
+    public async update(req: Request, res: Response): Promise<Response> {
+        const game = await Game.findById(req.params.id);
+
+        try {
+            if (req.file) {
+                if (game.imageURL) {
+                    const imagePath = path.resolve('public', 'uploads', 'game');
+                    fs.unlink(path.resolve(imagePath, game.imageURL), err => {
+                        if (err) return;
+
+                        fs.unlinkSync(
+                            path.resolve(
+                                imagePath,
+                                'thumbnail-' + game.imageURL
+                            )
+                        );
+                    });
+                }
+                await sharp(req.file.path, {
+                    failOnError: false,
+                })
+                    .resize(50)
+                    .withMetadata()
+                    .toFile(
+                        path.resolve(
+                            req.file.destination,
+                            'thumbnail-' + req.file.filename
+                        )
+                    );
+            }
+            await Game.findByIdAndUpdate(game.id, {
+                ...req.body,
+                imageURL: req.file ? req.file.filename : null,
+            });
+
+            return res.status(200).send('Dados do jogo atualizados');
+        } catch (err) {
+            console.log(err);
+            return res
+                .status(400)
+                .send({ error: 'Dados do jogo não atualizados' });
+        }
+
+        return;
     }
 }
 

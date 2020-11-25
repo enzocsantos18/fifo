@@ -225,6 +225,8 @@ class UserController {
             await User.findByIdAndUpdate(user.id, {
                 imageURL: req.file ? req.file.filename : null,
             });
+
+            return res.status(200).send('Dados do usuário atualizados');
         } catch (err) {
             console.log(err);
             return res.status(400).send({ error: 'Imagem não atualizada' });
