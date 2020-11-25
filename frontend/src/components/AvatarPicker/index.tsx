@@ -55,8 +55,12 @@ const AvatarPicker: React.FC<IProps> = ({
             getValue: () => {
                 return image;
             },
+            clearValue: () => {
+                setImage(null);
+                setImageSrc(defaultValue ? defaultValue : '');
+            },
         });
-    }, [fieldName, registerField, image]);
+    }, [fieldName, registerField, image, defaultValue]);
 
     useEffect(() => {
         if (defaultValue) {
