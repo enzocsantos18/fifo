@@ -177,7 +177,7 @@ const MyAccount: React.FC = () => {
                     </ReadOnly>
 
                     <Button
-                        variant='light'
+                        variant='secondary'
                         onClick={() => setChangingPassword(true)}>
                         Alterar senha
                     </Button>
