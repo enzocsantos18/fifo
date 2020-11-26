@@ -25,6 +25,8 @@ import { IScheduleDeleteMessage } from './../../services/socket';
 import { media } from '../../services/media';
 import Modal from '../../components/Modal';
 import { CircleShimmer, LineShimmer } from '../../components/Shimmer';
+import { AnimateSharedLayout, AnimatePresence } from 'framer-motion';
+import useSound from 'use-sound';
 
 interface ILocationState {
     game?: string;
@@ -69,14 +71,15 @@ const Queue: React.FC = () => {
     const [isUserTurn, setUserTurn] = useState(false);
     const [isUserTurnConfirmed, setUserTurnConfirmed] = useState(false);
 
+    const [playAlertSound] = useSound('/alert.mp3');
+    const [alertInterval, setAlertInterval] = useState<number | null>(null);
+
     async function loadSchedules() {
         setLoading(true);
 
         const { station } = location.state;
 
-        const { data: schedules } = await API.get<ISchedule[]>(
-            `schedules/${station}`
-        );
+        const { data: schedules } = await API.get<ISchedule[]>(`schedules/${station}`);
 
         const { data: userSchedules } = await API.get<ISchedule[]>('schedules');
 
@@ -142,9 +145,7 @@ const Queue: React.FC = () => {
     }
 
     function removeSchedule(id: string) {
-        setQueue(currentQueue =>
-            currentQueue.filter(schedule => schedule._id !== id)
-        );
+        setQueue(currentQueue => currentQueue.filter(schedule => schedule._id !== id));
     }
 
     function checkUserTurn() {
@@ -153,8 +154,29 @@ const Queue: React.FC = () => {
 
             if (firstSchedule._id === userSchedule?._id) {
                 setUserTurn(true);
+
+                if (!isUserTurnConfirmed) alertUserTurn();
             }
         }
+    }
+
+    function alertUserTurn() {
+        playAlertSound();
+
+        const interval = setInterval(() => {
+            playAlertSound();
+            document.title = document.title === 'Fila - FIFO' ? 'É a sua vez na fila! - FIFO' : 'Fila - FIFO';
+        }, 1000);
+
+        setAlertInterval(interval);
+    }
+
+    function confirmUserTurn() {
+        setUserTurn(false);
+        setUserTurnConfirmed(true);
+        document.title = 'Fila - FIFO';
+
+        if (alertInterval) clearInterval(alertInterval);
     }
 
     function setupSocket() {
@@ -201,57 +223,40 @@ const Queue: React.FC = () => {
                         {!isLoading ? (
                             <>
                                 {queue.length > 0 ? (
-                                    <>
-                                        {queue.map((schedule, index) => (
-                                            <QueueItem key={schedule._id}>
-                                                <QueueProfile>
-                                                    <span>
-                                                        {
-                                                            schedule.user
-                                                                .shortName
-                                                        }
-                                                    </span>
-                                                    <ProfileAvatar
-                                                        imageURL={
-                                                            schedule.user
-                                                                .imageURL
-                                                                ? media(
-                                                                      'user',
-                                                                      schedule
-                                                                          .user
-                                                                          .imageURL,
-                                                                      true
-                                                                  )
-                                                                : ''
-                                                        }
-                                                        username={
-                                                            schedule.user.name
-                                                        }
-                                                        size={40}
-                                                    />
-                                                </QueueProfile>
-                                                <QueueGame>
-                                                    <span>
-                                                        {schedule.game.name}
-                                                    </span>
-                                                </QueueGame>
-                                                <QueueDetails>
-                                                    {index == 0 && (
-                                                        <QueueStatus>
-                                                            <QueueStatusCircle />
-                                                            <span>JOGANDO</span>
-                                                        </QueueStatus>
-                                                    )}
-                                                    <span>{index + 1}º</span>
-                                                </QueueDetails>
-                                            </QueueItem>
-                                        ))}
-                                    </>
+                                    <AnimateSharedLayout>
+                                        <AnimatePresence>
+                                            {queue.map((schedule, index) => (
+                                                <QueueItem key={schedule._id}>
+                                                    <QueueProfile>
+                                                        <span>{schedule.user.shortName}</span>
+                                                        <ProfileAvatar
+                                                            imageURL={
+                                                                schedule.user.imageURL
+                                                                    ? media('user', schedule.user.imageURL, true)
+                                                                    : ''
+                                                            }
+                                                            username={schedule.user.name}
+                                                            size={40}
+                                                        />
+                                                    </QueueProfile>
+                                                    <QueueGame>
+                                                        <span>{schedule.game.name}</span>
+                                                    </QueueGame>
+                                                    <QueueDetails>
+                                                        {index == 0 && (
+                                                            <QueueStatus>
+                                                                <QueueStatusCircle />
+                                                                <span>JOGANDO</span>
+                                                            </QueueStatus>
+                                                        )}
+                                                        <span>{index + 1}º</span>
+                                                    </QueueDetails>
+                                                </QueueItem>
+                                            ))}
+                                        </AnimatePresence>
+                                    </AnimateSharedLayout>
                                 ) : (
-                                    <h2>
-                                        Ainda não há ninguém na fila. Seja o
-                                        primeiro!
-                                    </h2>
+                                    <h2>Ainda não há ninguém na fila. Seja o primeiro!</h2>
                                 )}
                             </>
                         ) : (
@@ -273,18 +278,12 @@ const Queue: React.FC = () => {
                             <MdArrowBack />
                             Voltar
                         </Button>
-                        <Button
-                            onClick={handleJoin}
-                            type='submit'
-                            variant='primary'
-                            disabled={isLoading || isUpdating}>
+                        <Button onClick={handleJoin} type='submit' variant='primary' disabled={isLoading || isUpdating}>
                             {isUpdating ? (
                                 <StageSpinner size={24} />
                             ) : (
                                 <>
-                                    {isJoined
-                                        ? 'Sair da fila'
-                                        : 'Entrar na Fila'}
+                                    {isJoined ? 'Sair da fila' : 'Entrar na Fila'}
                                     <MdAdd />
                                 </>
                             )}
@@ -297,17 +296,10 @@ const Queue: React.FC = () => {
                 <h2>Atenção!</h2>
                 <h3>É a sua vez de jogar!</h3>
                 <p>
-                    Recomendamos deixar essa janela aberta durante todo o jogo.
-                    Quando quiser terminar, apenas clique em sair da fila. Bom
-                    jogo!
+                    Recomendamos deixar essa janela aberta durante todo o jogo. Quando quiser terminar, apenas clique em
+                    sair da fila. Bom jogo!
                 </p>
-                <Button
-                    onClick={() => {
-                        setUserTurn(false);
-                        setUserTurnConfirmed(true);
-                    }}>
-                    OK
-                </Button>
+                <Button onClick={confirmUserTurn}>OK</Button>
             </Modal>
         </>
     );
