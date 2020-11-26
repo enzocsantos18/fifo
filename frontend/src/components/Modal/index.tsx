@@ -31,6 +31,7 @@ const Modal: React.FC<IProps> = ({ children, isVisible, width, onClose }) => {
         <AnimateSharedLayout type='crossfade'>
             <AnimatePresence>
                 <Wrapper
+                    initial={{ display: 'none' }}
                     animate={isVisible ? 'open' : 'closed'}
                     variants={wrapperVariants}>
                     <Container
