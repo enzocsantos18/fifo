@@ -10,11 +10,13 @@ export const Wrapper = styled.div`
     align-items: center;
 
     @media ${device.mobile} {
-        height: 100%;
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 
     @media ${device.tablet} {
-        height: 100%;
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 `;
 

@@ -41,4 +41,9 @@ export const Container = styled.div`
         box-shadow: none;
         padding: 10px 20px;
     }
+
+    @media ${device.tablet} {
+        height: calc(100% - 50px);
+        margin-top: 50px;
+    }
 `;

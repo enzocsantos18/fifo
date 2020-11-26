@@ -9,8 +9,14 @@ export const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
 
+    @media ${device.mobile} {
+        height: calc(100% - 50px);
+        margin-top: 50px;
+    }
+
     @media ${device.tablet} {
-        height: 100%;
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 `;
 
@@ -183,15 +189,18 @@ export const Container = styled.div`
     @media ${device.mobile} {
         box-shadow: none;
         padding: 10px 20px;
-        height: 100vh;
+        height: calc(100vh - 50px);
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
 
         ${QueueList} {
             height: 100%;
             overflow-y: auto;
             flex-direction: column;
+        }
+
+        ${Actions} {
+            margin-top: auto;
         }
     }
 `;

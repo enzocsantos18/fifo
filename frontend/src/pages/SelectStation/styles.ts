@@ -9,13 +9,14 @@ export const Wrapper = styled.div`
     justify-content: center;
     align-items: center;
 
-
     @media ${device.mobile} {
-        height: 100%;
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 
     @media ${device.tablet} {
-        height: 100%;
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 `;
 
@@ -27,7 +28,6 @@ export const Container = styled(motion.div)`
 
     @media ${device.mobile} {
         box-shadow: none;
-        text-align: center;
         padding: 10px 20px;
     }
 
