@@ -6,6 +6,8 @@ import { v4 as uuid } from 'uuid';
 import fs from 'fs';
 import sharp from 'sharp';
 import path from 'path';
+import ForgotPassword from '../models/ForgotPassword';
+import mailer, { parseForgotPasswordTemplate } from '../services/mailer';
 
 class UserController {
     public async index(req: Request, res: Response): Promise<Response> {
@@ -151,11 +153,89 @@ class UserController {
         }
 
         try {
-            if (await User.findOne({ email })) {
-                return res.status(201).json({ token: uuid() });
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res
+                    .status(400)
+                    .send({ error: 'Usuário não encontrado' });
             }
+
+            await ForgotPassword.deleteMany({ user });
+
+            const token = uuid();
+
+            await ForgotPassword.create({
+                token,
+                user,
+            });
+
+            const html = await parseForgotPasswordTemplate(token);
+
+            mailer.sendMail(
+                {
+                    to: email,
+                    from: 'squad2.fcamara@gmail.com',
+                    html,
+                },
+                err => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(400).send({
+                            error: 'E-mail resete de senha não enviado',
+                        });
+                    }
+                    return res.status(200).send('E-mail enviado');
+                }
+            );
         } catch (err) {
             return res.status(400).send({ error: 'Email inválido.' });
+        }
+    }
+
+    public async resetPassword(req: Request, res: Response): Promise<Response> {
+        const forgotPassword = await ForgotPassword.findOne({
+            token: req.params.id,
+        });
+
+        if (!forgotPassword)
+            return res.status(404).send({ error: 'Token inválido' });
+
+        const schema = Yup.object().shape({
+            password: Yup.string()
+                .required('Senha deve ser inserida')
+                .min(8, 'A senha deve ter no mínimo 8 caracteres'),
+            confirmPassword: Yup.string()
+                .required('Confirmação de senha deve ser inserida')
+                .oneOf(
+                    [Yup.ref('password'), undefined],
+                    'As senhas devem ser iguais'
+                ),
+        });
+
+        try {
+            await schema.validate(req.body, {
+                abortEarly: false,
+            });
+        } catch (err) {
+            const errors = {};
+            err.inner.forEach(error => {
+                errors[error.path] = error.message;
+            });
+            return res.status(400).send(errors);
+        }
+
+        try {
+            const newPassword = await bcrypt.hash(req.body.password, 10);
+
+            await User.findByIdAndUpdate(forgotPassword.user, {
+                password: newPassword,
+            });
+
+            return res.status(200).send('Senha alterada');
+        } catch (err) {
+            return res
+                .status(400)
+                .send({ error: 'Não foi possível mudar a senha' });
         }
     }
 
@@ -231,8 +311,6 @@ class UserController {
             console.log(err);
             return res.status(400).send({ error: 'Imagem não atualizada' });
         }
-
-        return;
     }
 }
 
