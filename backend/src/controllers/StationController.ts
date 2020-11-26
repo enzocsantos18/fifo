@@ -59,13 +59,31 @@ class StationController {
                 ...req.body,
             });
         } catch (err) {
-            console.log(err);
             return res
                 .status(400)
                 .send({ error: 'Dados da estação não atualizadas' });
         }
 
-        return;
+        return res.status(200).send();
+    }
+
+    public async destroy(req: Request, res: Response): Promise<Response> {
+        const station = await Station.findById(req.params.id);
+
+        if (!station) {
+            return res.status(404).send({ error: 'Estação não localizada' });
+        }
+
+        try {
+            await GameStation.deleteMany({ station });
+            await station.deleteOne();
+        } catch (err) {
+            return res.status(400).send({
+                error: 'Não foi possível excluir a estação',
+            });
+        }
+
+        return res.status(200).send();
     }
 }
 
