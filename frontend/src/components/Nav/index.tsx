@@ -19,6 +19,7 @@ import {
     Sidebar,
     SidebarItem,
     SidebarContent,
+    MobileMenu,
 } from './styles';
 
 const sidebarVariants = {
@@ -32,7 +33,7 @@ const sidebarVariants = {
     },
     closed: {
         right: '-100%',
-        opacity: 0
+        opacity: 0,
     },
 };
 
@@ -120,8 +121,9 @@ const Nav: React.FC = () => {
                         )}
                     </Dropdown>
                 </Content>
-
-                <MdMenu size={36} onClick={() => setSidebarVisible(true)} />
+                <MobileMenu>
+                    <MdMenu size={36} onClick={() => setSidebarVisible(true)} />
+                </MobileMenu>
             </Container>
             <Sidebar variants={sidebarVariants} animate={isSidebarVisible ? 'open' : 'closed'}>
                 {userData && (

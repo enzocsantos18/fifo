@@ -3,31 +3,6 @@ import styled from 'styled-components';
 import device from './../../util/device';
 import { motion } from 'framer-motion';
 
-export const Container = styled.div`
-    width: 100%;
-    height: 70px;
-    background: #fff;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 5;
-
-    @media ${device.mobile} {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 10px 20px;
-    }
-
-    @media ${device.tablet} {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 10px 20px;
-    }
-`;
-
 export const Content = styled.div`
     margin: auto;
     width: 1200px;
@@ -154,5 +129,44 @@ export const SidebarItem = styled.div`
     & a:active,
     & a:visited {
         color: var(--text1);
+    }
+`;
+
+export const MobileMenu = styled.div``;
+
+export const Container = styled.div`
+    width: 100%;
+    height: 70px;
+    background: #fff;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 5;
+
+    & ${MobileMenu} {
+        display: none;
+    }
+
+    @media ${device.mobile} {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+
+        & ${MobileMenu} {
+            display: block;
+        }
+    }
+
+    @media ${device.tablet} {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+
+        & ${MobileMenu} {
+            display: block;
+        }
     }
 `;
