@@ -42,19 +42,30 @@ router.patch(
     [GameBannerStorage.single('image'), AuthMiddleware, AdminMiddleware],
     GameController.update
 );
-router.post(
-    '/games/stations',
-    [AuthMiddleware, AdminMiddleware],
-    StationController.create
-);
+
 router.get('/games/:id/stations', StationController.indexByGame);
+router.delete(
+    '/games/:id',
+    [AuthMiddleware, AdminMiddleware],
+    GameController.destroy
+);
 
 //Stations
 router.get('/stations', StationController.index);
 router.post(
+    '/stations',
+    [AuthMiddleware, AdminMiddleware],
+    StationController.create
+);
+router.patch(
     '/stations/:id',
     [AuthMiddleware, AdminMiddleware],
     StationController.update
+);
+router.delete(
+    '/stations/:id',
+    [AuthMiddleware, AdminMiddleware],
+    StationController.destroy
 );
 
 //Schedules
