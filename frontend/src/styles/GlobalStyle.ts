@@ -89,6 +89,18 @@ export default createGlobalStyle`
         }
     }   
 
+    @keyframes blink {
+        0% {
+            border-color: #fd7e7e;
+            color: #fd7e7e;
+        }
+        
+        100% {
+            border-color: #000;
+            color: #000;
+        }
+    }
+
     @media ${device.mobile} {
         html, body, #root {
             background: #fff;
