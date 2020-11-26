@@ -32,7 +32,7 @@ class GameController {
             err.inner.forEach(error => {
                 errors[error.path] = error.message;
             });
-            fs.unlinkSync(req.file.path);
+            if (req.file) fs.unlinkSync(req.file.path);
             return res.status(400).send(errors);
         }
 
@@ -131,11 +131,29 @@ class GameController {
 
             return res.status(200).send('Dados do jogo atualizados');
         } catch (err) {
-            console.log(err);
             return res
                 .status(400)
                 .send({ error: 'Dados do jogo não atualizados' });
         }
+    }
+
+    public async destroy(req: Request, res: Response): Promise<Response> {
+        const game = await Game.findById(req.params.id);
+
+        if (!game) {
+            return res.status(404).send({ error: 'Jogo não localizado' });
+        }
+
+        try {
+            await GameStation.deleteMany({ game });
+            await game.deleteOne();
+        } catch (err) {
+            return res.status(400).send({
+                error: 'Não foi possível excluir o jogo',
+            });
+        }
+
+        return res.status(200).send();
     }
 }
 
