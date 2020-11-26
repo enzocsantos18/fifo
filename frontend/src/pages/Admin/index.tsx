@@ -3,9 +3,10 @@ import { MdPlace, MdPlayCircleFilled } from 'react-icons/md';
 
 import { Container, Tab, Content, TabItem } from './styles';
 import GamesAdmin from './Games';
+import StationsAdmin from './Stations';
 
 const Admin: React.FC = () => {
-    const [selectedTab, setSelectedTab] = useState('games');
+    const [selectedTab, setSelectedTab] = useState('stations');
 
     return (
         <Container>
@@ -23,7 +24,8 @@ const Admin: React.FC = () => {
                 </TabItem>
             </Tab>
             <Content>
-                <GamesAdmin />
+                {selectedTab === 'games' && <GamesAdmin />}
+                {selectedTab === 'stations' && <StationsAdmin />}
             </Content>
         </Container>
     );
