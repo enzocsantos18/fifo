@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import device from './../util/device';
 
 export default createGlobalStyle`
     
@@ -7,6 +8,7 @@ export default createGlobalStyle`
         padding: 0;
         font-family: 'Open Sans', 'Helvetica', sans-serif;
         background: #f2f2f2;
+        overflow-x: hidden;
     }
 
     * {
@@ -86,5 +88,17 @@ export default createGlobalStyle`
             background-position: 468px 0; 
         }
     }   
+
+    @media ${device.mobile} {
+        html, body, #root {
+            background: #fff;
+        }
+    }
+
+    @media ${device.tablet} {
+        html, body, #root {
+            background: #fff;
+        }
+    }
 
 `;

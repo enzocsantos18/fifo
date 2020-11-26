@@ -1,10 +1,13 @@
 import styled from 'styled-components';
+import device from './../../util/device';
 
 export const Wrapper = styled.div`
     height: calc(100vh - 70px);
     display: flex;
     justify-content: center;
     align-items: center;
+
+    
 `;
 
 export const Container = styled.div`
@@ -12,7 +15,7 @@ export const Container = styled.div`
     padding: 30px 40px;
     background: #fff;
     border-radius: 16px;
-    box-shadow: 1px 1px 4px rgba(0,0,0, .1);
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
 
     & h1 {
         margin-bottom: 20px;
@@ -27,7 +30,7 @@ export const Container = styled.div`
         font-size: 12px;
         margin-bottom: 10px;
         color: var(--text0);
-        transition: all .2s ease;
+        transition: all 0.2s ease;
         cursor: pointer;
         text-decoration: none;
     }
@@ -43,5 +46,10 @@ export const Container = styled.div`
     & a:hover {
         color: var(--text1);
         text-decoration: underline;
+    }
+
+    @media ${device.mobile} {
+        box-shadow: none;
+        padding: 10px 20px;
     }
 `;

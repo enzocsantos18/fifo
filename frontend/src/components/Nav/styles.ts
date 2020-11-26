@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import device from './../../util/device';
 
 export const Container = styled.div`
     width: 100%;
@@ -10,6 +11,14 @@ export const Container = styled.div`
     position: fixed;
     left: 0;
     top: 0;
+
+    @media ${device.mobile} {
+        display: none;
+    }
+
+    @media ${device.tablet} {
+        display: none;
+    }
 `;
 
 export const Content = styled.div`

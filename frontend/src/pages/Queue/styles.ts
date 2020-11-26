@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import device from './../../util/device';
 
 export const Wrapper = styled.div`
     width: 100vw;
@@ -6,6 +7,10 @@ export const Wrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    @media ${device.tablet} {
+        height: 100%;
+    }
 `;
 
 export const Container = styled.div`
@@ -24,17 +29,11 @@ export const Container = styled.div`
     }
 
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
-`;
 
-export const QueueList = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -10px;
-    margin-right: -10px;
-    min-height: 120px;
-
-    & h2 {
-        margin-left: 10px;
+    @media ${device.mobile} {
+        box-shadow: none;
+        padding: 10px 20px;
+        height: 100%;
     }
 `;
 
@@ -72,6 +71,28 @@ export const QueueItemShimmerContainer = styled.div`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+`;
+
+export const QueueList = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    margin-right: -10px;
+    min-height: 120px;
+
+    & h2 {
+        margin-left: 10px;
+    }
+
+    @media ${device.mobile} {
+        min-height: 55vh;
+        max-height: 55vh;
+        overflow-y: auto;
+
+        ${QueueItemShimmerContainer}:nth-child(n+3) {
+            display: none;
+        }
+    }
 `;
 
 export const QueueProfile = styled.div`
@@ -133,5 +154,18 @@ export const Actions = styled.div`
 
     & button {
         width: 48%;
+    }
+
+    @media ${device.mobile} {
+        flex-direction: column-reverse;
+
+        & button {
+            width: 100%;
+            margin-bottom: 10px;
+
+            & svg {
+                display: none;
+            }
+        }
     }
 `;

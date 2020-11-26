@@ -316,7 +316,7 @@ const Queue: React.FC = () => {
 const QueueItemShimmer: React.FC = () => {
     return (
         <QueueItemShimmerContainer>
-            <LineShimmer width='100px' height='7px' style={{ marginTop: 15 }} />
+            <LineShimmer width='70%' height='7px' style={{ marginTop: 15 }} />
             <CircleShimmer width='40px' height='40px' />
             <LineShimmer width='100px' height='7px' style={{ marginTop: 10 }} />
             <LineShimmer width='100px' height='7px' />
