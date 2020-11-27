@@ -10,6 +10,7 @@ import Auth from './services/auth';
 import MyAccount from './pages/MyAccount';
 import Queue from './pages/Queue';
 import Admin from './pages/Admin';
+import ResetPassword from './pages/ResetPassword';
 import { UserContext } from './contexts/User';
 
 interface IPageProps {
@@ -76,6 +77,7 @@ const Routes: React.FC = () => {
             <Switch>
                 <GuestRoute path='/login' title='Página de Login - FIFO' component={Login} />
                 <GuestRoute path='/register' title='Página de Registro - FIFO' component={Register} />
+                <GuestRoute path='/resetpassword/:token' title='Recuperar senha - FIFO' component={ResetPassword} />
                 <PrivateRoute path='/schedule/game' title='Escolha um jogo - FIFO' component={SelectGame} />
                 <PrivateRoute path='/' title='Escolha um jogo - FIFO' component={SelectGame} exact />
                 <PrivateRoute path='/schedule/station' title='Escolha uma estação - FIFO' component={SelectStation} />
