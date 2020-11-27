@@ -18,6 +18,8 @@ router.post(
     UserController.create
 );
 router.post('/users/forgotpassword', UserController.forgotPassword);
+router.post('/users/resetpassword/:id', UserController.resetPassword);
+
 router.post(
     '/users/changepassword',
     AuthMiddleware,

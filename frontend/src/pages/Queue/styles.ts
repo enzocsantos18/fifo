@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import device from './../../util/device';
 
 export const Wrapper = styled.div`
     width: 100vw;
@@ -6,40 +8,31 @@ export const Wrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-`;
 
-export const Container = styled.div`
-    background: #fff;
-    border-radius: 8px;
-    padding: 30px 40px;
-    width: 780px;
-
-    & form {
-        display: flex;
-        flex-direction: column;
-
-        & label {
-            margin-top: 20px;
-        }
+    @media ${device.mobile} {
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
-`;
-
-export const QueueList = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -10px;
-    margin-right: -10px;
-    min-height: 120px;
-
-    & h2 {
-        margin-left: 10px;
+    @media ${device.tablet} {
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 `;
 
-export const QueueItem = styled.div`
-    width: 220px;
+export const QueueItem = styled(motion.div).attrs({
+    initial: {
+        opacity: 0,
+    },
+    animate: {
+        opacity: 1,
+    },
+    exit: {
+        opacity: 0,
+    },
+    layout: true
+})`
+    width: 210px;
     height: 100px;
     border: 3px solid var(--light1);
     border-radius: 8px;
@@ -62,7 +55,7 @@ export const QueueItem = styled.div`
 `;
 
 export const QueueItemShimmerContainer = styled.div`
-    width: 220px;
+    width: 210px;
     height: 100px;
     border: 2px solid var(--light1);
     border-radius: 8px;
@@ -74,6 +67,22 @@ export const QueueItemShimmerContainer = styled.div`
     flex-wrap: wrap;
 `;
 
+export const QueueList = styled(motion.div).attrs({
+    layout: true,
+})`
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -10px;
+    margin-right: -10px;
+    min-height: 120px;
+    max-height: 360px;
+    overflow-y: auto;
+
+    & h2 {
+        margin-left: 10px;
+    }
+`;
+
 export const QueueProfile = styled.div`
     display: flex;
     justify-content: space-between;
@@ -83,6 +92,10 @@ export const QueueProfile = styled.div`
         font-size: 14px;
         color: var(--text0);
         font-weight: 700;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 90px;
     }
 `;
 
@@ -124,6 +137,13 @@ export const QueueStatusCircle = styled.div`
     background: #ff0000;
     border: 3px solid #000;
     border-radius: 50%;
+
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: blink;
+    animation-timing-function: linear;
 `;
 
 export const Actions = styled.div`
@@ -133,5 +153,54 @@ export const Actions = styled.div`
 
     & button {
         width: 48%;
+    }
+
+    @media ${device.mobile} {
+        flex-direction: column-reverse;
+
+        & button {
+            width: 100%;
+            margin-bottom: 10px;
+
+            & svg {
+                display: none;
+            }
+        }
+    }
+`;
+
+export const Container = styled.div`
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px 40px;
+    width: 780px;
+
+    & form {
+        display: flex;
+        flex-direction: column;
+
+        & label {
+            margin-top: 20px;
+        }
+    }
+
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+
+    @media ${device.mobile} {
+        box-shadow: none;
+        padding: 10px 20px;
+        height: calc(100vh - 50px);
+        display: flex;
+        flex-direction: column;
+
+        ${QueueList} {
+            height: 100%;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+
+        ${Actions} {
+            margin-top: auto;
+        }
     }
 `;

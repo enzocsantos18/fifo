@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import device from './../../util/device';
 
 export const Wrapper = styled.div`
     height: calc(100vh - 70px);
@@ -34,5 +35,15 @@ export const Container = styled.div`
 
     .center {
         text-align: center;
+    }
+
+    @media ${device.mobile} {
+        box-shadow: none;
+        padding: 10px 20px;
+    }
+
+    @media ${device.tablet} {
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 `;

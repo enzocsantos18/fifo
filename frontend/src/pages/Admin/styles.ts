@@ -1,12 +1,6 @@
 import styled, { css } from 'styled-components';
+import device from './../../util/device';
 
-export const Container = styled.div`
-    border-radius: 8px;
-    margin: auto;
-    margin-top: 120px;
-    width: 760px;
-    display: flex;
-`;
 
 export const Tab = styled.div`
     width: 200px;
@@ -61,4 +55,33 @@ export const Content = styled.div`
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
     margin-left: 20px;
     width: 100%;
+`;
+
+export const Container = styled.div`
+    border-radius: 8px;
+    margin: auto;
+    margin-top: 120px;
+    width: 760px;
+    display: flex;
+
+    @media ${device.mobile} {
+        flex-direction: column;
+
+        ${Tab} {
+            display: flex;
+            width: 100vw;
+            justify-content: space-around;
+            padding: 0 10px;
+        }
+
+        ${TabItem} {
+            width: 48%;
+        }
+
+        ${Content} {
+            width: 100vw;
+            margin: 0;
+            padding: 10px 20px;
+        }
+    }
 `;

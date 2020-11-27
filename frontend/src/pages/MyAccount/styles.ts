@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import device from './../../util/device';
 
 export const Container = styled.div`
     width: 1200px;
@@ -21,6 +22,15 @@ export const Container = styled.div`
 
     & .red {
         color: red;
+    }
+
+    @media ${device.mobile} {
+        width: 100%;
+    }
+
+    @media ${device.tablet} {
+        height: calc(100% - 50px);
+        margin-top: 50px;
     }
 `;
 
