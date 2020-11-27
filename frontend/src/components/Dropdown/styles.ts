@@ -47,6 +47,7 @@ export const Item = styled.div`
         text-decoration: none;
         width: 80%;
         height: 100%;
+        color: var(--text0);
     }
 
     & a:active, & a:visited {

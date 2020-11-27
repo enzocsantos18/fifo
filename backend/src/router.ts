@@ -18,6 +18,8 @@ router.post(
     UserController.create
 );
 router.post('/users/forgotpassword', UserController.forgotPassword);
+router.post('/users/resetpassword/:id', UserController.resetPassword);
+
 router.post(
     '/users/changepassword',
     AuthMiddleware,
@@ -37,12 +39,36 @@ router.post(
     [GameBannerStorage.single('image'), AuthMiddleware, AdminMiddleware],
     GameController.create
 );
+router.patch(
+    '/games/:id',
+    [GameBannerStorage.single('image'), AuthMiddleware, AdminMiddleware],
+    GameController.update
+);
+
+router.get('/games/:id/stations', StationController.indexByGame);
+router.delete(
+    '/games/:id',
+    [AuthMiddleware, AdminMiddleware],
+    GameController.destroy
+);
+
+//Stations
+router.get('/stations', StationController.index);
 router.post(
-    '/games/stations',
+    '/stations',
     [AuthMiddleware, AdminMiddleware],
     StationController.create
 );
-router.get('/games/:id/stations', StationController.indexByGame);
+router.patch(
+    '/stations/:id',
+    [AuthMiddleware, AdminMiddleware],
+    StationController.update
+);
+router.delete(
+    '/stations/:id',
+    [AuthMiddleware, AdminMiddleware],
+    StationController.destroy
+);
 
 //Schedules
 router.get('/schedules', AuthMiddleware, ScheduleController.index);

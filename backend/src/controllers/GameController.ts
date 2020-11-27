@@ -6,6 +6,8 @@ import {
 import * as Yup from 'yup';
 import Station from '../models/Station';
 import fs from 'fs';
+import sharp from 'sharp';
+import path from 'path';
 import { Types } from 'mongoose';
 
 class GameController {
@@ -30,7 +32,7 @@ class GameController {
             err.inner.forEach(error => {
                 errors[error.path] = error.message;
             });
-            fs.unlinkSync(req.file.path);
+            if (req.file) fs.unlinkSync(req.file.path);
             return res.status(400).send(errors);
         }
 
@@ -67,10 +69,91 @@ class GameController {
 
             return res.json(game);
         } catch (err) {
-            console.log(err);
             fs.unlinkSync(req.file.path);
             return res.status(400).send({ game: 'Jogo inválido' });
         }
+    }
+
+    public async update(req: Request, res: Response): Promise<Response> {
+        const game = await Game.findById(req.params.id);
+
+        try {
+            await GameStation.deleteMany({ game });
+
+            if (req.file) {
+                if (game.imageURL) {
+                    const imagePath = path.resolve('public', 'uploads', 'game');
+                    fs.unlink(path.resolve(imagePath, game.imageURL), err => {
+                        if (err) return;
+
+                        fs.unlinkSync(
+                            path.resolve(
+                                imagePath,
+                                'thumbnail-' + game.imageURL
+                            )
+                        );
+                    });
+                }
+                await sharp(req.file.path, {
+                    failOnError: false,
+                })
+                    .resize(50)
+                    .withMetadata()
+                    .toFile(
+                        path.resolve(
+                            req.file.destination,
+                            'thumbnail-' + req.file.filename
+                        )
+                    );
+            }
+            await Game.findByIdAndUpdate(game.id, {
+                ...req.body,
+                imageURL: req.file ? req.file.filename : game.imageURL,
+            });
+
+            const stations = JSON.parse(req.body['stations']);
+
+            stations.forEach(async (stationId: string) => {
+                if (await Station.exists({ _id: stationId })) {
+                    const station = await Station.findById(stationId);
+
+                    await GameStation.create({
+                        game,
+                        station,
+                    });
+                } else {
+                    if (req.file) fs.unlinkSync(req.file.path);
+                    return res
+                        .status(400)
+                        .send({ station: 'Estação desconhecida' });
+                }
+            });
+
+            return res.status(200).send('Dados do jogo atualizados');
+        } catch (err) {
+            return res
+                .status(400)
+                .send({ error: 'Dados do jogo não atualizados' });
+        }
+    }
+
+    public async destroy(req: Request, res: Response): Promise<Response> {
+        const game = await Game.findById(req.params.id);
+
+        if (!game) {
+            return res.status(404).send({ error: 'Jogo não localizado' });
+        }
+
+        try {
+            await GameStation.deleteMany({ game });
+            await game.deleteOne();
+        } catch (err) {
+            return res.status(400).send({
+                error: 'Não foi possível excluir o jogo',
+            });
+        }
+
+        return res.status(200).send();
     }
 }
 

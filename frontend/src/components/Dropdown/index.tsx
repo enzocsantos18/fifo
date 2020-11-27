@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { Wrapper, Container, Item } from './styles';
 
-interface IItem {
+export interface IItem {
     text: string;
     route?: string;
     icon?: JSX.Element;

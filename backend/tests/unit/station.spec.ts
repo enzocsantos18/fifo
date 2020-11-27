@@ -61,12 +61,33 @@ describe('Estação', async () => {
 
     it('Usuário administrador pode criar uma estação', async () => {
         const response = await request(server)
-            .post(`/games/stations`)
+            .post(`/stations/`)
             .send({
                 name: 'Estação criada',
             })
             .set('Authorization', `Bearer ${authToken}`);
 
         expect(response.status).to.equal(200);
+    });
+
+    it('Usuário administrador pode editar uma estação', async () => {
+        const response = await request(server)
+            .patch(`/stations/${defaultStation._id}`)
+            .send({
+                name: 'Estação editada',
+            })
+            .set('Authorization', `Bearer ${authToken}`);
+
+        expect(response.status).to.equal(200);
+    });
+
+    it('Usuário administrador pode excluir uma estação', async () => {
+        await request(server)
+            .delete(`/stations/${defaultStation._id}`)
+            .set('Authorization', `Bearer ${authToken}`);
+
+        const exists = await Station.exists({ _id: defaultStation._id });
+
+        expect(exists).to.equal(false);
     });
 });

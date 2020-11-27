@@ -1,16 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-
-export const Container = styled.div`
-    width: 100%;
-    height: 70px;
-
-    background: #fff;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    left: 0;
-    top: 0;
-`;
+import device from './../../util/device';
+import { motion } from 'framer-motion';
 
 export const Content = styled.div`
     margin: auto;
@@ -19,6 +10,14 @@ export const Content = styled.div`
     justify-content: space-between;
     align-items: center;
     height: 70px;
+
+    @media ${device.mobile} {
+        display: none;
+    }
+
+    @media ${device.tablet} {
+        display: none;
+    }
 `;
 
 export const LinkList = styled.div`
@@ -86,6 +85,88 @@ export const ProfileContainerShimmerContainer = styled.div`
 
         & div:last-child {
             margin-left: 10px;
+        }
+    }
+`;
+
+export const Sidebar = styled(motion.div)`
+    position: fixed;
+    right: -100%;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    z-index: 100;
+`;
+
+export const SidebarContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 20px 30px;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+`;
+
+export const SidebarItem = styled.div`
+    color: var(--text0);
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    & a,
+    & span {
+        text-decoration: none;
+        width: 80%;
+        height: 100%;
+        color: var(--text0);
+    }
+
+    & a:active,
+    & a:visited {
+        color: var(--text1);
+    }
+`;
+
+export const MobileMenu = styled.div``;
+
+export const Container = styled.div`
+    width: 100%;
+    height: 70px;
+    background: #fff;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 5;
+
+    & ${MobileMenu} {
+        display: none;
+    }
+
+    @media ${device.mobile} {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+
+        & ${MobileMenu} {
+            display: block;
+        }
+    }
+
+    @media ${device.tablet} {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 20px;
+
+        & ${MobileMenu} {
+            display: block;
         }
     }
 `;
