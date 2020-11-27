@@ -110,6 +110,7 @@ const SelectGame: React.FC = () => {
                                     onClick={() => handleClick(game._id)}
                                     key={game.name}>
                                     <img src={media('game', game.imageURL)} />
+                                    <span>{game.name}</span>
                                 </GameBanner>
                             ))}
                         </>

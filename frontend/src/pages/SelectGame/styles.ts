@@ -52,13 +52,38 @@ export const GameBanner = styled.div`
     margin: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
+    position: relative;
 
     & img {
         height: 200px;
         max-width: 160px;
         object-fit: cover;
         border-radius: 16px;
-        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+
+    & img:hover {
+        filter: brightness(0.7);
+    }
+
+    & img:hover + span {
+        opacity: 1;
+    }
+
+    & span {
+        position: absolute;
+        opacity: 0;
+        text-align: center;
+        right: 0;
+        left: 0;
+        bottom: 20px;
+        margin: 0 auto;
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        max-width: 120px;
+        pointer-events: none;
+        transition: all 0.2s ease;
     }
 
     @media ${device.mobile} {
