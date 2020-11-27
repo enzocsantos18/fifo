@@ -2,13 +2,14 @@ import mongoose from '../database/connections';
 import { IUser } from './User';
 
 interface IForgotPassword extends mongoose.Document {
-    user: IUser,
-    token: String,
-};
+    user: IUser;
+    token: String;
+}
 
-const ForgotPasswordSchema = new mongoose.Schema ({
+const ForgotPasswordSchema = new mongoose.Schema({
     user: {
         type: mongoose.Types.ObjectId,
+        ref: 'User',
         required: true,
     },
     token: {
@@ -19,7 +20,10 @@ const ForgotPasswordSchema = new mongoose.Schema ({
         type: Date,
         default: Date.now,
         index: { expires: '15m' },
-      },
+    },
 });
 
-export default mongoose.model<IForgotPassword>('ForgotPassword', ForgotPasswordSchema);
+export default mongoose.model<IForgotPassword>(
+    'ForgotPassword',
+    ForgotPasswordSchema
+);
