@@ -44,6 +44,10 @@ Configure de acordo:
 SERVER_PORT=3333     # Porta do servidor (recomendável deixar 3333)
 JWT_SECRET=          # Chave do jwt     
 DB_URL=              # URL do seu banco de dados MongoDB   
+EMAIL_HOST=          # Servidor de envio de e-mail
+EMAIL_PORT=          # Porta do servidor de e-mail
+EMAIL_USER=          # Login do usuário do e-mail
+EMAIL_PASS=          # Senha do usuário de e-mail
 ```
 
 Inicie o servidor:
