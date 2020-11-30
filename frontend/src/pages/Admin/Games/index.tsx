@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import {
-    Container,
-    ModalBody,
-    StationItem,
-    StationItemCheck,
-    StationList,
-    Table,
-} from './styles';
+import { Container, ModalBody, StationItem, StationItemCheck, StationList, Table } from './styles';
 import { Form } from '@unform/web';
 import { MdDeleteForever, MdEdit, MdSearch, MdAdd } from 'react-icons/md';
 import TextInput from '../../../components/Input/Text';
@@ -68,9 +61,7 @@ const GamesAdmin: React.FC = () => {
             return;
         }
 
-        const searchedGames = staticGames.filter(game =>
-            game.name.toLowerCase().includes(data.query)
-        );
+        const searchedGames = staticGames.filter(game => game.name.toLowerCase().includes(data.query));
 
         setGames(searchedGames);
     }
@@ -89,10 +80,7 @@ const GamesAdmin: React.FC = () => {
         setStaticGames(games);
     }
 
-    async function handleGameUpdate(
-        data: IUpdateFormData,
-        action: 'edit' | 'create'
-    ) {
+    async function handleGameUpdate(data: IUpdateFormData, action: 'edit' | 'create') {
         const schema = Yup.object().shape({
             name: Yup.string().required('O nome deve ser inserido'),
         });
@@ -107,6 +95,8 @@ const GamesAdmin: React.FC = () => {
             stations.map(station => {
                 if (station.selected) selectedStations.push(station._id);
             });
+
+            if (selectedStations.length === 0) return;
 
             const formData = new FormData();
             formData.append('name', data.name);
@@ -167,16 +157,12 @@ const GamesAdmin: React.FC = () => {
         editFormRef.current?.reset();
         editFormRef.current?.setFieldValue('name', game?.name);
 
-        const { data: gameStations } = await API.get<IGameStation[]>(
-            `games/${game._id}/stations`
-        );
+        const { data: gameStations } = await API.get<IGameStation[]>(`games/${game._id}/stations`);
 
         setStations(
             stations.map(station => ({
                 ...station,
-                selected: gameStations.some(
-                    gameStation => gameStation.station._id === station._id
-                ),
+                selected: gameStations.some(gameStation => gameStation.station._id === station._id),
             }))
         );
     }
@@ -185,8 +171,7 @@ const GamesAdmin: React.FC = () => {
         setStations(
             stations.map(station => ({
                 ...station,
-                selected:
-                    station._id === id ? !station.selected : station.selected,
+                selected: station._id === id ? !station.selected : station.selected,
             }))
         );
     }
@@ -200,11 +185,7 @@ const GamesAdmin: React.FC = () => {
             <Container>
                 <h2>Gerenciamento dos jogos</h2>
                 <Form onSubmit={handleSearch}>
-                    <TextInput
-                        name='query'
-                        placeholder='Pesquise um jogo...'
-                        icon={<MdSearch size={20} />}
-                    />
+                    <TextInput name='query' placeholder='Pesquise um jogo...' icon={<MdSearch size={20} />} />
                 </Form>
 
                 <Table>
@@ -241,34 +222,20 @@ const GamesAdmin: React.FC = () => {
                     Novo Jogo <MdAdd size={20} />
                 </Button>
             </Container>
-            <Modal
-                isVisible={isEditing}
-                onClose={() => setEditing(false)}
-                width='400px'>
+            <Modal isVisible={isEditing} onClose={() => setEditing(false)} width='400px'>
                 <ModalBody>
                     <h2>Editar jogo</h2>
-                    <Form
-                        ref={editFormRef}
-                        onSubmit={data => handleGameUpdate(data, 'edit')}>
+                    <Form ref={editFormRef} onSubmit={data => handleGameUpdate(data, 'edit')}>
                         <AvatarPicker
                             name='image'
-                            defaultValue={
-                                editingGame?.imageURL &&
-                                media('game', editingGame.imageURL)
-                            }
+                            defaultValue={editingGame?.imageURL && media('game', editingGame.imageURL)}
                         />
                         <TextInput name='name' placeholder='Nome do jogo' />
                         <StationList>
                             <p>Estações disponíveis:</p>
                             {stations.map(station => (
-                                <StationItem
-                                    key={station._id}
-                                    onClick={() =>
-                                        handleSelectStation(station._id)
-                                    }>
-                                    <StationItemCheck
-                                        selected={station.selected}
-                                    />
+                                <StationItem key={station._id} onClick={() => handleSelectStation(station._id)}>
+                                    <StationItemCheck selected={station.selected} />
                                     {station.name}
                                 </StationItem>
                             ))}
@@ -280,51 +247,33 @@ const GamesAdmin: React.FC = () => {
                 </ModalBody>
             </Modal>
 
-            <Modal
-                isVisible={isCreating}
-                onClose={() => setCreating(false)}
-                width='400px'>
+            <Modal isVisible={isCreating} onClose={() => setCreating(false)} width='400px'>
                 <ModalBody>
                     <h2>Criar jogo</h2>
-                    <Form
-                        ref={createFormRef}
-                        onSubmit={data => handleGameUpdate(data, 'create')}>
+                    <Form ref={createFormRef} onSubmit={data => handleGameUpdate(data, 'create')}>
                         <AvatarPicker name='image' />
                         <TextInput name='name' placeholder='Nome do jogo' />
                         <StationList>
                             <p>Estações disponíveis:</p>
                             {stations.map(station => (
-                                <StationItem
-                                    key={station._id}
-                                    onClick={() =>
-                                        handleSelectStation(station._id)
-                                    }>
-                                    <StationItemCheck
-                                        selected={station.selected}
-                                    />
+                                <StationItem key={station._id} onClick={() => handleSelectStation(station._id)}>
+                                    <StationItemCheck selected={station.selected} />
                                     {station.name}
                                 </StationItem>
                             ))}
                         </StationList>
                         <Button type='submit' variant='secondary'>
-                            Editar
+                            Criar
                         </Button>
                     </Form>
                 </ModalBody>
             </Modal>
 
-            <Modal
-                isVisible={isDeleting}
-                onClose={() => setDeleting(false)}
-                width='400px'>
+            <Modal isVisible={isDeleting} onClose={() => setDeleting(false)} width='400px'>
                 <ModalBody>
-                    <h3>
-                        Você realmente deseja excluir "{deletingGame?.name}" ?
-                    </h3>
+                    <h3>Você realmente deseja excluir "{deletingGame?.name}" ?</h3>
                     <ModalActions>
-                        <Button
-                            variant='secondary'
-                            onClick={() => setDeleting(false)}>
+                        <Button variant='secondary' onClick={() => setDeleting(false)}>
                             Não
                         </Button>
                         <Button variant='primary' onClick={handleGameDelete}>

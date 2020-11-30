@@ -99,7 +99,7 @@ const SelectGame: React.FC = () => {
                 <GameList>
                     {staticGames.length == 0 ? (
                         <>
-                            {[...Array(5)].map((element, index) => (
+                            {[...Array(4)].map((element, index) => (
                                 <GameBannerShimmer key={index} />
                             ))}
                         </>

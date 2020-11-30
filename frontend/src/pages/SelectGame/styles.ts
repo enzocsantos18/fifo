@@ -21,7 +21,7 @@ export const Wrapper = styled.div`
 `;
 
 export const Container = styled(motion.div)`
-    width: 900px;
+    width: 800px;
     background: #fff;
     border-radius: 8px;
     padding: 20px 30px;
@@ -39,6 +39,8 @@ export const GameList = styled.div`
     flex-wrap: wrap;
     margin-left: -10px;
     margin-right: -10px;
+    max-height: 440px;
+    overflow-y: auto;
 
     @media ${device.mobile} {
         justify-content: space-around;
@@ -56,7 +58,7 @@ export const GameBanner = styled.div`
 
     & img {
         height: 200px;
-        max-width: 160px;
+        width: 160px;
         object-fit: cover;
         border-radius: 16px;
         transition: all 0.2s ease;
